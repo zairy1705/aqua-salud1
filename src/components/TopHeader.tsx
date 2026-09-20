@@ -24,6 +24,7 @@ interface TopHeaderProps {
   onOpenAquaIA?: () => void;
   onOpenAudit?: () => void;
   onOpenE2ETestModal?: () => void;
+  onResetToOriginal?: () => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
@@ -43,6 +44,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onOpenAquaIA,
   onOpenAudit,
   onOpenE2ETestModal,
+  onResetToOriginal,
 }) => {
   const [isAppsOpen, setIsAppsOpen] = useState(false);
   const [isCalypsoPlaying, setIsCalypsoPlaying] = useState(() => checkCalypsoPlaying());
@@ -72,16 +74,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const initialLetter = operatorName ? operatorName.charAt(0).toUpperCase() : 'I';
 
   return (
-    <header className="sticky top-0 w-full z-40 bg-white/90 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,103,125,0.08)] border-b border-cyan-900/10">
+    <header className="sticky top-0 w-full z-40 bg-white/85 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,103,125,0.1),inset_0_1px_0_0_rgba(255,255,255,0.95)] border-b border-white/60">
       <div className="h-20 px-3 sm:px-4 max-w-5xl mx-auto flex items-center justify-between gap-2">
         {/* Brand logo & title */}
         <div className="flex items-center gap-2 sm:gap-2.5">
           <div
             onClick={onNavigateHome}
-            className="flex items-center gap-2 cursor-pointer group select-none"
+            className="flex items-center gap-2.5 cursor-pointer group select-none"
             title="Ir a Página Principal"
           >
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-[#00b4d8] to-[#00677d] flex items-center justify-center text-white shadow-[0_4px_12px_rgba(0,180,216,0.35)] group-hover:scale-105 transition-transform">
+            <div className="glass-icon-box w-10 h-10 rounded-xl flex items-center justify-center text-[#00677d] group-hover:scale-105 transition-transform relative">
               <span className="material-symbols-outlined text-[24px]">water_drop</span>
               <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#10e7b2] border-2 border-white flex items-center justify-center text-[7px] font-bold text-[#002116]">
                 ✓
@@ -89,15 +91,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-[17px] sm:text-[19px] text-[#003d4c] tracking-tight leading-none group-hover:text-[#00677d] transition-colors font-hud">
+                <span className="glass-title-heading text-[17px] sm:text-[19px] leading-none">
                   AQUA-SALUD
                 </span>
-                <span className="text-[8.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-cyan-100 text-[#00677d] border border-cyan-200 font-hud">
+                <span className="glass-badge text-[8.5px] px-1.5 py-0.5 text-[#00677d]">
                   JASS
                 </span>
               </div>
-              <div className="flex items-center gap-1 mt-0.5">
-                <span className="font-hud text-[10px] sm:text-[11px] text-[#006c51] tracking-wider uppercase leading-none font-bold">
+              <div className="flex items-center gap-1 mt-1">
+                <span className="font-hud text-[10px] sm:text-[11px] text-[#006c51] tracking-wider uppercase leading-none font-black">
                   {currentTabTitle}
                 </span>
               </div>
@@ -107,11 +109,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           {onReturnToPublic && (
             <button
               onClick={onReturnToPublic}
-              className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-cyan-50 text-[#00677d] border border-slate-200 hover:border-cyan-200 text-[10.5px] font-hud font-bold uppercase transition-all cursor-pointer ml-1"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-option-btn text-[10.5px] cursor-pointer ml-1"
               title="Volver al Portal Público AQUA-SALUD"
             >
-              <span className="material-symbols-outlined text-[15px]">home</span>
-              <span>Portal Público</span>
+              <span className="material-symbols-outlined text-[15px] text-[#00677d]">home</span>
+              <span>PORTAL PÚBLICO</span>
             </button>
           )}
         </div>
@@ -119,10 +121,46 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
         {/* Action buttons & profile badge */}
         <div className="flex items-center gap-2">
+          {/* RESTAURAR DATOS (Direct Navigation Button) */}
+          {onResetToOriginal && (
+            <button
+              id="btn-reset-to-original"
+              onClick={onResetToOriginal}
+              className="glass-option-btn text-amber-900 border-amber-300/60 hover:border-amber-500 bg-amber-50/70 hover:bg-amber-100/90 shadow-xs active:scale-95"
+              title="Restaurar o reiniciar datos desde la navegación a los valores originales por defecto"
+              type="button"
+            >
+              <span className="material-symbols-outlined text-[17px] text-amber-600">
+                restart_alt
+              </span>
+              <span className="hidden xl:inline text-[10px] font-black uppercase tracking-wider">
+                RESTAURAR DATOS
+              </span>
+            </button>
+          )}
+
+          {/* SIMULACIÓN E2E / PURGA DEMO */}
+          {onOpenE2ETestModal && (
+            <button
+              id="btn-open-e2e-demo"
+              onClick={onOpenE2ETestModal}
+              className="glass-option-btn text-purple-900 border-purple-300/60 hover:border-purple-500 bg-purple-50/70 hover:bg-purple-100/90 shadow-xs active:scale-95"
+              title="Abrir simulación E2E y purga de datos DEMO"
+              type="button"
+            >
+              <span className="material-symbols-outlined text-[17px] text-purple-600">
+                science
+              </span>
+              <span className="hidden lg:inline text-[10px] font-black uppercase tracking-wider">
+                DEMO / PURGA
+              </span>
+            </button>
+          )}
+
           {/* Operator Info Button */}
           <button
             onClick={onOpenProfile}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#edf5fc] hover:bg-gradient-to-r hover:from-cyan-100 hover:to-teal-100 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.9)] border border-[#bcc9ce]/40 hover:border-[#00b4d8] hover:shadow-[0_2px_12px_rgba(0,180,216,0.3)] transition-all duration-200 cursor-pointer text-left active:scale-95 group"
+            className="glass-option-btn px-3 py-1 text-left active:scale-95 group"
             type="button"
             title="Ver o gestionar perfiles con correo y contraseña"
           >
@@ -130,10 +168,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               verified_user
             </span>
             <div className="flex flex-col">
-              <span className="font-hud text-[9px] text-[#3d494d] group-hover:text-[#00677d] uppercase leading-none font-bold truncate max-w-[120px] sm:max-w-[150px] transition-colors">
+              <span className="font-hud text-[9px] text-[#3d494d] group-hover:text-[#00677d] uppercase leading-none font-bold truncate max-w-[110px] sm:max-w-[140px] transition-colors">
                 {operatorName}
               </span>
-              <span className="font-hud text-[11px] sm:text-[12px] text-[#00677d] group-hover:text-[#004e5f] font-bold leading-none mt-0.5 truncate max-w-[120px] sm:max-w-[150px] transition-colors">
+              <span className="font-hud text-[10px] sm:text-[11px] text-[#00677d] font-black leading-none mt-0.5 truncate max-w-[110px] sm:max-w-[140px] transition-colors uppercase">
                 {operatorRole}
               </span>
             </div>
@@ -510,6 +548,48 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                         </span>
                       </div>
                       <div className="text-[10px] text-[#556987]">Paso a paso ilustrado y descargable</div>
+                    </div>
+                  </button>
+                )}
+
+                {/* GESTIÓN DE DATOS Y SIMULACIÓN */}
+                <div className="px-3 py-1.5 text-[10px] font-hud uppercase tracking-wider text-[#3d494d] font-bold border-t border-[#edf5fc] mb-1 mt-1">
+                  Gestión y Simulación
+                </div>
+                {onOpenE2ETestModal && (
+                  <button
+                    onClick={() => {
+                      setIsAppsOpen(false);
+                      onOpenE2ETestModal();
+                    }}
+                    className="w-full px-3 py-2 rounded-xl text-left text-[13px] font-medium text-purple-950 hover:bg-purple-50 flex items-center gap-2.5 transition-all cursor-pointer group"
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-purple-600 group-hover:scale-110 text-[18px] transition-transform">
+                      science
+                    </span>
+                    <div>
+                      <div className="font-bold text-[12px] text-purple-900">Simulación E2E / Purgar DEMO</div>
+                      <div className="text-[10px] text-purple-600">Probar flujo completo y limpiar pruebas</div>
+                    </div>
+                  </button>
+                )}
+                {onResetToOriginal && (
+                  <button
+                    id="btn-reset-to-original-menu"
+                    onClick={() => {
+                      setIsAppsOpen(false);
+                      onResetToOriginal();
+                    }}
+                    className="w-full px-3 py-2 rounded-xl text-left text-[13px] font-medium text-amber-950 hover:bg-amber-50 flex items-center gap-2.5 transition-all cursor-pointer group"
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-amber-600 group-hover:scale-110 text-[18px] transition-transform">
+                      restart_alt
+                    </span>
+                    <div>
+                      <div className="font-bold text-[12px] text-amber-900">Restaurar Datos Originales</div>
+                      <div className="text-[10px] text-amber-600">Reajustar a sistemas y bitácoras iniciales</div>
                     </div>
                   </button>
                 )}

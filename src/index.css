@@ -41,6 +41,310 @@
   }
 }
 
+/* =========================================================================
+   ESTILO INSTITUCIONAL DE CRISTAL (GLASSMORPHISM & BISELADO PREMIUM)
+   - Panel de cristal (Glassmorphism con saturación y desenfoque)
+   - Cristal translúcido con brillo
+   - Bordes biselados tipo vidrio (sombras e iluminaciones inset 3D)
+   - Reflejos superiores y destellos de bisel
+   - Ligero efecto metálico plateado/titanio
+   - Tipografía moderna en mayúsculas
+   - Alto contraste institucional
+   ========================================================================= */
+
+.glass-title-panel {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(240, 249, 255, 0.84) 48%, rgba(228, 244, 252, 0.92) 100%);
+  background-image: 
+    radial-gradient(ellipse at 50% -20%, rgba(255, 255, 255, 0.95), transparent 70%),
+    linear-gradient(118deg, rgba(255, 255, 255, 0.9) 0%, rgba(215, 238, 248, 0.45) 28%, rgba(255, 255, 255, 0.98) 50%, rgba(210, 236, 246, 0.4) 72%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 1.5rem;
+  box-shadow: 
+    0 16px 36px -8px rgba(0, 78, 95, 0.12),
+    0 4px 12px 0 rgba(0, 180, 216, 0.08),
+    inset 0 2px 2px 0 rgba(255, 255, 255, 1),
+    inset 0 6px 14px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -2.5px 3px 0 rgba(0, 70, 90, 0.16),
+    inset 2px 0 2px 0 rgba(255, 255, 255, 0.9),
+    inset -2px 0 2px 0 rgba(0, 70, 90, 0.12);
+}
+
+/* Reflejo superior y bisel especular */
+.glass-title-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 15%, rgba(16, 231, 178, 0.9) 45%, rgba(0, 180, 216, 0.95) 65%, rgba(255, 255, 255, 0.95) 85%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.glass-title-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+/* Tipografía moderna en mayúsculas y alto contraste para títulos */
+.glass-title-heading {
+  font-family: 'Space Grotesk', ui-monospace, sans-serif;
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #002731;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================================================
+   PANEL Y TARJETA DE CRISTAL (GLASSMORPHISM EXTENDIDO)
+   ========================================================================= */
+
+.glass-panel {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 250, 255, 0.82) 50%, rgba(235, 246, 252, 0.88) 100%);
+  backdrop-filter: blur(16px) saturate(185%);
+  -webkit-backdrop-filter: blur(16px) saturate(185%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 1.25rem;
+  box-shadow: 
+    0 10px 28px -6px rgba(0, 78, 95, 0.09),
+    0 2px 8px 0 rgba(0, 180, 216, 0.05),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(0, 70, 90, 0.08);
+}
+
+.glass-panel-subtle {
+  position: relative;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 1rem;
+  box-shadow: 
+    0 4px 16px -2px rgba(0, 78, 95, 0.06),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.92) 0%, rgba(240, 249, 255, 0.8) 100%);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 1.25rem;
+  box-shadow: 
+    0 8px 24px -4px rgba(0, 60, 75, 0.08),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 2px 0 rgba(0, 60, 75, 0.07);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 25%, rgba(0, 180, 216, 0.4) 50%, rgba(255, 255, 255, 0.9) 75%, transparent 100%);
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 180, 216, 0.35);
+  box-shadow: 
+    0 12px 32px -4px rgba(0, 180, 216, 0.16),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 2px 0 rgba(0, 60, 75, 0.1);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 103, 125, 0.18);
+  border-radius: 0.75rem;
+  color: #002b35;
+  box-shadow: inset 0 1px 2px rgba(0, 40, 50, 0.05);
+  transition: all 0.2s ease;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #00b4d8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.25), inset 0 1px 2px rgba(0, 40, 50, 0.05);
+}
+
+/* Opciones interactivas con estilo de cristal biselado */
+.glass-option-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Space Grotesk', ui-monospace, sans-serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: #004351;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(238, 248, 255, 0.72) 100%);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 0.875rem;
+  padding: 0.55rem 1rem;
+  box-shadow: 
+    0 4px 14px -2px rgba(0, 103, 125, 0.08),
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 2px 0 rgba(0, 70, 90, 0.12),
+    inset 1px 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset -1px 0 1px 0 rgba(0, 70, 90, 0.08);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-option-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 30%, rgba(16, 231, 178, 0.7) 50%, rgba(255, 255, 255, 0.9) 70%, transparent 100%);
+  pointer-events: none;
+}
+
+.glass-option-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(225, 245, 254, 0.9) 100%);
+  border-color: rgba(0, 180, 216, 0.5);
+  color: #00232b;
+  box-shadow: 
+    0 6px 18px -2px rgba(0, 180, 216, 0.25),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(0, 80, 100, 0.15);
+  transform: translateY(-1.5px);
+}
+
+.glass-option-btn:active:not(:disabled) {
+  transform: translateY(0.5px) scale(0.97);
+  box-shadow: 
+    0 2px 6px rgba(0, 103, 125, 0.12),
+    inset 0 2px 4px 0 rgba(0, 60, 75, 0.2);
+}
+
+/* Opción activa / primaria con acabado metálico turquesa y biselado intenso */
+.glass-option-btn-primary {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Space Grotesk', ui-monospace, sans-serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  background: linear-gradient(135deg, #005364 0%, #007791 48%, #009ab7 100%);
+  border: 1px solid rgba(16, 231, 178, 0.75);
+  border-radius: 0.875rem;
+  padding: 0.55rem 1rem;
+  box-shadow: 
+    0 6px 20px -3px rgba(0, 83, 100, 0.4),
+    0 0 12px 1px rgba(16, 231, 178, 0.25),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -2px 3px 0 rgba(0, 25, 35, 0.45);
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 20, 28, 0.5);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-option-btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 20%, #10e7b2 50%, rgba(255, 255, 255, 0.95) 80%, transparent 100%);
+  pointer-events: none;
+}
+
+.glass-option-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #006075 0%, #0087a4 48%, #00adc9 100%);
+  box-shadow: 
+    0 8px 24px -2px rgba(0, 180, 216, 0.5),
+    0 0 16px 2px rgba(16, 231, 178, 0.4),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 3px 0 rgba(0, 25, 35, 0.45);
+  transform: translateY(-1.5px);
+}
+
+/* Insignia / Badge de cristal biselado */
+.glass-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Space Grotesk', ui-monospace, sans-serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(228, 245, 253, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 2px 8px rgba(0, 103, 125, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -1px 1px rgba(0, 60, 75, 0.1);
+}
+
+/* Contenedor de icono en cristal biselado */
+.glass-icon-box {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(230, 246, 253, 0.85) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 6px 16px -2px rgba(0, 103, 125, 0.14),
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(0, 70, 90, 0.15);
+}
+
+.glass-icon-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.9) 50%, transparent 100%);
+  pointer-events: none;
+}
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;

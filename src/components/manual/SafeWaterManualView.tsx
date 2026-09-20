@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas-pro';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface SafeWaterManualViewProps {
   onNavigateToDosage?: () => void;
@@ -76,48 +77,58 @@ export const SafeWaterManualView: React.FC<SafeWaterManualViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 pb-20">
-      {/* Banner Principal de la Guía */}
-      <div className="bg-gradient-to-br from-[#003d4c] via-[#005a70] to-[#002833] rounded-3xl p-5 sm:p-7 text-white shadow-xl border border-cyan-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="space-y-2 max-w-2xl">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#10e7b2] text-[#002b1f] text-[10px] font-hud font-extrabold uppercase tracking-wider">
-              Guía Oficial de Campo
-            </span>
-            <span className="px-2 py-0.5 rounded-full bg-white/20 text-cyan-200 text-[10px] font-hud font-bold uppercase">
-              D.S. N.° 031-2010-SA
-            </span>
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 6 • GUÍA OFICIAL DE CAMPO • D.S. N.° 031-2010-SA"
+        icon="menu_book"
+        title="MANUALES DE AYUDA • CONSUMO DE AGUA SEGURA"
+        subtitle="Pautas técnicas, operativas y comunitarias para garantizar la desinfección, el control de cloro residual y la inocuidad del agua para el consumo humano en comunidades y sistemas rurales."
+        stats={[
+          {
+            label: 'ESTÁNDAR CLORO RESIDUAL',
+            value: '≥ 0.5 mg/L',
+            subtext: 'Límite legal en grifo',
+          },
+          {
+            label: 'NORMATIVA APLICABLE',
+            value: 'D.S. 031',
+            subtext: 'Reglamento DIGESA / MINSA',
+          },
+          {
+            label: 'MÉTODO DE ANÁLISIS',
+            value: 'DPD-1',
+            subtext: 'Colorimetría en campo',
+          },
+          {
+            label: 'FRECUENCIA LIMPIEZA',
+            value: '2 veces/año',
+            subtext: 'Desinfección de reservorios',
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={isGeneratingPdf}
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider disabled:opacity-50"
+              title="Descargar versión completa para imprimir o consultar sin internet"
+            >
+              <span className="material-symbols-outlined text-[18px]">download</span>
+              <span>{isGeneratingPdf ? 'GENERANDO PDF...' : 'DESCARGAR INSTRUCTIVO PDF'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
+              title="Imprimir guía rápida"
+            >
+              <span className="material-symbols-outlined text-[17px]">print</span>
+              <span>IMPRIMIR GUÍA</span>
+            </button>
           </div>
-          <h2 className="font-hud font-black text-xl sm:text-2xl text-white tracking-tight">
-            Manuales de Ayuda para un Consumo de Agua Segura
-          </h2>
-          <p className="text-xs sm:text-sm text-cyan-100/90 leading-relaxed">
-            Pautas técnicas, operativas y comunitarias para garantizar la desinfección, el control de cloro residual y la inocuidad del agua para el consumo humano en comunidades y sistemas rurales.
-          </p>
-        </div>
-
-        {/* Acciones de Exportación */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={handleDownloadPdf}
-            disabled={isGeneratingPdf}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#00b4d8] to-[#10e7b2] text-[#002833] font-hud font-black text-xs uppercase shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
-            title="Descargar versión completa para imprimir o consultar sin internet"
-          >
-            <span className="material-symbols-outlined text-[18px]">download</span>
-            <span>{isGeneratingPdf ? 'Generando PDF...' : 'Descargar Instructivo PDF'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-hud font-bold text-xs uppercase transition-colors cursor-pointer"
-            title="Imprimir guía rápida"
-          >
-            <span className="material-symbols-outlined text-[17px]">print</span>
-            <span className="hidden sm:inline">Imprimir</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {isGeneratingPdf && (
         <div className="p-3 bg-cyan-50 border border-cyan-200 rounded-2xl text-xs text-[#00677d] font-bold flex items-center gap-2 animate-pulse">
@@ -126,24 +137,24 @@ export const SafeWaterManualView: React.FC<SafeWaterManualViewProps> = ({
         </div>
       )}
 
-      {/* Barra de Filtros de Secciones */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+      {/* Barra de Filtros de Secciones con Estilo Glassmorphism */}
+      <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 glass-title-panel rounded-2xl scrollbar-none">
         {[
-          { id: 'all', label: '📖 Todo el Manual', icon: 'menu_book' },
-          { id: 'basics', label: '💧 Consumo de Agua Segura', icon: 'water_drop' },
-          { id: 'cloracion', label: '⚖️ Pasos de Cloración', icon: 'calculate' },
-          { id: 'dpd', label: '🔬 Medición con DPD-1', icon: 'colorize' },
-          { id: 'limpieza', label: '🚰 Limpieza de Reservorios', icon: 'cleaning_services' },
-          { id: 'normativa', label: '📜 Normativa D.S. 031', icon: 'gavel' },
+          { id: 'all', label: '📖 TODO EL MANUAL', icon: 'menu_book' },
+          { id: 'basics', label: '💧 CONSUMO DE AGUA SEGURA', icon: 'water_drop' },
+          { id: 'cloracion', label: '⚖️ PASOS DE CLORACIÓN', icon: 'calculate' },
+          { id: 'dpd', label: '🔬 MEDICIÓN CON DPD-1', icon: 'colorize' },
+          { id: 'limpieza', label: '🚰 LIMPIEZA DE RESERVORIOS', icon: 'cleaning_services' },
+          { id: 'normativa', label: '📜 NORMATIVA D.S. 031', icon: 'gavel' },
         ].map((sec) => (
           <button
             key={sec.id}
             type="button"
             onClick={() => setActiveSection(sec.id as any)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-hud font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0 ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0 ${
               activeSection === sec.id
-                ? 'bg-[#00677d] text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-cyan-50 hover:text-[#00677d] border border-slate-200'
+                ? 'glass-option-btn-primary'
+                : 'glass-option-btn'
             }`}
           >
             <span>{sec.label}</span>

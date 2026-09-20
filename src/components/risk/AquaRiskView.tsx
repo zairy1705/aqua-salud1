@@ -7,6 +7,7 @@ import {
 } from '../../types';
 import { getRiskLevelBadge } from '../../data/riskAlertEngine';
 import { NewRiskModal } from './NewRiskModal';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface AquaRiskViewProps {
   risks: AquaRiskItem[];
@@ -87,33 +88,45 @@ export const AquaRiskView: React.FC<AquaRiskViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      {/* HEADER BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-amber-500/30">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[11px] font-hud font-extrabold uppercase tracking-wider">
-                FASE 6 • PLAN DE SEGURIDAD DEL AGUA (PSA)
-              </span>
-              <span className="text-xs text-amber-200/80 font-mono">D.S. N.° 031-2010-SA</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-hud font-black tracking-tight text-white flex items-center gap-2.5">
-              <span>⚠️ AQUA-RISK</span>
-              <span className="text-amber-400 text-lg font-mono">• Matriz de Riesgos Sanitarios</span>
-            </h1>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Identificación y ponderación de peligros hídricos, fuentes críticas, probabilidad, consecuencia y medidas de control. Conectado al ciclo: <strong>Resultado → Riesgo → Alerta → Acción → Verificación</strong>.
-            </p>
-          </div>
-
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 6 • PLAN DE SEGURIDAD DEL AGUA (PSA) • D.S. N.° 031-2010-SA"
+        icon="warning"
+        title="AQUA-RISK • MATRIZ DE RIESGOS SANITARIOS"
+        subtitle="Identificación y ponderación de peligros hídricos, fuentes críticas, probabilidad, consecuencia y medidas de control. Conectado al ciclo: Resultado → Riesgo → Alerta → Acción → Verificación."
+        stats={[
+          {
+            label: 'PELIGROS CRÍTICOS',
+            value: stats.critico,
+            subtext: 'Intervención inmediata',
+            highlight: stats.critico > 0,
+          },
+          {
+            label: 'RIESGO ALTO',
+            value: stats.alto,
+            subtext: 'Requiere corrección prioritaria',
+          },
+          {
+            label: 'RIESGO MODERADO',
+            value: stats.moderado,
+            subtext: 'Vigilancia preventiva programada',
+          },
+          {
+            label: 'RIESGO BAJO',
+            value: stats.bajo,
+            subtext: 'Condición operativa normal',
+          },
+        ]}
+        actions={
           <div className="flex flex-wrap items-center gap-2">
             {onNavigateToAlerts && (
               <button
                 type="button"
                 onClick={() => onNavigateToAlerts()}
-                className="px-4 py-3 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/40 font-hud text-[12px] font-bold uppercase transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:scale-[1.02]"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider text-rose-700"
               >
-                <span>🚨 Ir a AQUA-ALERT</span>
+                <span className="material-symbols-outlined text-sm text-rose-600">notifications_active</span>
+                <span>IR A AQUA-ALERT</span>
               </button>
             )}
 
@@ -123,32 +136,14 @@ export const AquaRiskView: React.FC<AquaRiskViewProps> = ({
                 setEditingRisk(null);
                 setIsModalOpen(true);
               }}
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-hud text-[12px] font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg hover:scale-[1.02] cursor-pointer"
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
             >
-              <span className="text-base font-bold">+</span>
-              <span>Nuevo Peligro / Riesgo</span>
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              <span>NUEVO PELIGRO / RIESGO</span>
             </button>
           </div>
-        </div>
-
-        {/* CONNECTION FLOW BANNER */}
-        <div className="mt-6 pt-4 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-3 text-xs font-hud">
-          <span className="text-amber-300/80 uppercase font-bold tracking-wider">
-            Ciclo de Gestión Sanitaria:
-          </span>
-          <div className="flex flex-wrap items-center gap-2 text-slate-300">
-            <span className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700">1. Resultado Analítico / Medición</span>
-            <span className="text-amber-400">→</span>
-            <span className="px-2.5 py-1 rounded-lg bg-amber-500/30 text-amber-200 border border-amber-500/40 font-bold">2. Riesgo (AQUA-RISK)</span>
-            <span className="text-amber-400">→</span>
-            <span className="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-200 border border-rose-500/30">3. Alerta (AQUA-ALERT)</span>
-            <span className="text-amber-400">→</span>
-            <span className="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-200 border border-sky-500/30">4. Acción Requerida</span>
-            <span className="text-amber-400">→</span>
-            <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 font-bold">5. Verificación Sanitaria</span>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* KPI METRIC CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">

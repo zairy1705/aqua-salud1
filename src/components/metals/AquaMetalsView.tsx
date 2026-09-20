@@ -11,6 +11,7 @@ import {
 } from '../../data/metalsData';
 import { RegisterMetalResultModal } from './RegisterMetalResultModal';
 import { MetalsConfigModal } from './MetalsConfigModal';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 import {
   ResponsiveContainer,
   LineChart,
@@ -292,181 +293,138 @@ export const AquaMetalsView: React.FC<AquaMetalsViewProps> = ({
 
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-4 space-y-6">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-950 text-white rounded-3xl p-5 sm:p-7 shadow-xl border border-cyan-800/50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 px-3 py-1 rounded-full text-xs font-mono font-semibold tracking-wide">
-              <span className="material-symbols-outlined text-sm text-cyan-400">science</span>
-              FASE 5 • AQUA-METALS • VIGILANCIA TOXICOLÓGICA
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
-              Vigilancia de Metales y Elementos Traza
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
-              Monitoreo analítico y toxicológico de 10 parámetros inorgánicos (As, Pb, Cd, Hg, Cr, Ni, Cu, Zn, Fe, Mn) y elementos configurables. Cumplimiento estricto del D.S. N.° 031-2010-SA.
-            </p>
-          </div>
-
-          {/* Quick Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 md:pt-0">
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 5 • AQUA-METALS • VIGILANCIA TOXICOLÓGICA"
+        icon="science"
+        title="VIGILANCIA DE METALES Y ELEMENTOS TRAZA"
+        subtitle="Monitoreo analítico y toxicológico de 10 parámetros inorgánicos (As, Pb, Cd, Hg, Cr, Ni, Cu, Zn, Fe, Mn) y elementos configurables. Cumplimiento estricto del D.S. N.° 031-2010-SA."
+        stats={[
+          {
+            label: 'PARÁMETROS EN CATÁLOGO',
+            value: catalog.length,
+            subtext: `(10 Estándar + ${catalog.length - 10} Custom)`,
+          },
+          {
+            label: 'ENSAYOS EJECUTADOS',
+            value: complianceStats.totalTests,
+            subtext: 'analizados',
+          },
+          {
+            label: 'ALERTAS TOXICOLÓGICAS',
+            value: metalAlerts.length,
+            subtext: `(${complianceStats.criticalAlerts} Críticas / ${complianceStats.preventiveAlerts} Prev.)`,
+            highlight: complianceStats.criticalAlerts > 0,
+          },
+          {
+            label: 'CONFORMIDAD LMP LEGAL',
+            value: `${complianceStats.rate.toFixed(1)}%`,
+            subtext: `(${complianceStats.unregulated} sin norma)`,
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 setSelectedSampleForNew(samples[0]?.id);
                 setIsRegisterOpen(true);
               }}
-              className="px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-cyan-900/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2"
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
+              type="button"
             >
               <span className="material-symbols-outlined text-base">add_circle</span>
-              Registrar Ensayo de Metal
+              <span>REGISTRAR ENSAYO DE METAL</span>
             </button>
 
             <button
               onClick={() => setIsConfigOpen(true)}
-              className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-cyan-200 hover:text-white text-xs sm:text-sm font-semibold rounded-xl border border-cyan-400/30 transition-all flex items-center gap-1.5"
+              className="glass-option-btn text-xs sm:text-sm font-black uppercase tracking-wider"
+              type="button"
             >
               <span className="material-symbols-outlined text-base">tune</span>
-              Configurar Parámetros
+              <span>CONFIGURAR PARÁMETROS</span>
             </button>
 
             {onNavigateToLab && (
               <button
                 onClick={onNavigateToLab}
-                className="px-3 py-2.5 bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white text-xs font-medium rounded-xl border border-white/10 transition-all flex items-center gap-1"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider"
                 title="Ir al Laboratorio Digital AQUA-LAB"
+                type="button"
               >
                 <span className="material-symbols-outlined text-sm">biotech</span>
-                AQUA-LAB
+                <span>AQUA-LAB</span>
               </button>
             )}
           </div>
-        </div>
+        }
+      />
 
-        {/* Global Stats Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 mt-6 border-t border-slate-700/80">
-          <div className="bg-white/5 rounded-2xl p-3 border border-white/5">
-            <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400">
-              Parámetros en Catálogo
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-xl sm:text-2xl font-black text-white font-mono">
-                {catalog.length}
-              </span>
-              <span className="text-[10.5px] text-cyan-300">
-                (10 Estándar + {catalog.length - 10} Custom)
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-white/5 rounded-2xl p-3 border border-white/5">
-            <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400">
-              Ensayos Ejecutados
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-xl sm:text-2xl font-black text-cyan-400 font-mono">
-                {complianceStats.totalTests}
-              </span>
-              <span className="text-[10.5px] text-slate-400">
-                analizados
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-white/5 rounded-2xl p-3 border border-white/5">
-            <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400">
-              Alertas Toxicológicas
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span
-                className={`text-xl sm:text-2xl font-black font-mono ${
-                  complianceStats.criticalAlerts > 0 ? 'text-rose-400' : 'text-emerald-400'
-                }`}
-              >
-                {metalAlerts.length}
-              </span>
-              <span className="text-[10.5px] text-rose-300">
-                ({complianceStats.criticalAlerts} Críticas / {complianceStats.preventiveAlerts} Prev.)
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-white/5 rounded-2xl p-3 border border-white/5">
-            <span className="text-[11px] uppercase font-bold tracking-wider text-slate-400">
-              Conformidad LMP Legal
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
-                {complianceStats.rate.toFixed(1)}%
-              </span>
-              <span className="text-[10.5px] text-slate-400">
-                ({complianceStats.unregulated} sin norma)
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Sub-Tabs */}
-      <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
+      {/* Navigation Sub-Tabs in Glass Style */}
+      <div className="flex flex-wrap items-center gap-1.5 p-1.5 glass-title-panel rounded-2xl">
         <button
           onClick={() => setActiveSubTab('tendencia')}
-          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
             activeSubTab === 'tendencia'
-              ? 'bg-white text-cyan-800 shadow-sm border border-cyan-200/60'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
+          type="button"
         >
           <span className="material-symbols-outlined text-base">show_chart</span>
-          Tendencia Histórica
+          <span>TENDENCIA HISTÓRICA</span>
         </button>
 
         <button
           onClick={() => setActiveSubTab('sistemas')}
-          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
             activeSubTab === 'sistemas'
-              ? 'bg-white text-cyan-800 shadow-sm border border-cyan-200/60'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
+          type="button"
         >
           <span className="material-symbols-outlined text-base">compare_arrows</span>
-          Comparación por Sistemas
+          <span>POR SISTEMAS</span>
         </button>
 
         <button
           onClick={() => setActiveSubTab('territorial')}
-          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
             activeSubTab === 'territorial'
-              ? 'bg-white text-cyan-800 shadow-sm border border-cyan-200/60'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
+          type="button"
         >
           <span className="material-symbols-outlined text-base">map</span>
-          Comparación Territorial
+          <span>TERRITORIAL</span>
         </button>
 
         <button
           onClick={() => setActiveSubTab('alertas')}
-          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
             activeSubTab === 'alertas'
-              ? 'bg-white text-rose-700 shadow-sm border border-rose-200/60'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'glass-option-btn-primary border-rose-300 text-rose-800'
+              : 'glass-option-btn text-rose-700'
           }`}
+          type="button"
         >
           <span className="material-symbols-outlined text-base text-rose-600">notifications_active</span>
-          Alertas ({metalAlerts.length})
+          <span>ALERTAS ({metalAlerts.length})</span>
         </button>
 
         <button
           onClick={() => setActiveSubTab('resultados')}
-          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
             activeSubTab === 'resultados'
-              ? 'bg-white text-cyan-800 shadow-sm border border-cyan-200/60'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
+          type="button"
         >
           <span className="material-symbols-outlined text-base">table_chart</span>
-          Registro Maestro ({allMetalResults.length})
+          <span>REGISTRO MAESTRO ({allMetalResults.length})</span>
         </button>
       </div>
 

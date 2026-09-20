@@ -13,6 +13,7 @@ import {
   FileSpreadsheet,
   Droplet
 } from 'lucide-react';
+import { GlassTitlePanel } from './GlassTitlePanel';
 import { SamplingRecord, WaterSystem } from '../types';
 import { evaluateChlorineNormative } from '../utils/waterMath';
 
@@ -128,83 +129,95 @@ export const LogbookView: React.FC<LogbookViewProps> = ({
     setIsNewRecordModalOpen(false);
   };
 
+  const compliantCount = records.filter((r) => r.status === 'compliant').length;
+  const lowCount = records.filter((r) => r.status === 'low').length;
+  const excessCount = records.filter((r) => r.status === 'excess').length;
+
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-teal-100 text-teal-800 border border-teal-200">
-              Vigilancia Sanitaria
-            </span>
-            <span className="text-xs text-slate-500 font-medium">
-              Registro Oficial D.S. N.° 031-2010-SA
-            </span>
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-in fade-in duration-300">
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 1 • VIGILANCIA SANITARIA • REGISTRO OFICIAL"
+        normative="D.S. N.° 031-2010-SA • MINSA / DIGESA"
+        icon="menu_book"
+        title="BITÁCORA DE CONTROL Y CALIDAD DEL AGUA"
+        subtitle="Historial cronológico de muestras de Cloro Residual Libre, pH y Turbiedad para cumplimiento ante MINSA, DIGESA y fiscalizaciones de SUNASS."
+        stats={[
+          {
+            label: 'TOTAL REGISTROS',
+            value: records.length,
+            subtext: 'Muestras archivadas',
+          },
+          {
+            label: 'CONFORMIDAD LEGAL',
+            value: records.length > 0 ? `${Math.round((compliantCount / records.length) * 100)}%` : '100%',
+            subtext: `${compliantCount} en rango óptimo`,
+            highlight: compliantCount < records.length && records.length > 0,
+          },
+          {
+            label: 'ALERTAS DE SUB-CLORACIÓN',
+            value: lowCount,
+            subtext: lowCount > 0 ? 'Riesgo biológico latente' : 'Sin alertas de cloro bajo',
+            highlight: lowCount > 0,
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              id="btn-export-csv"
+              onClick={handleExportCSV}
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
+            >
+              <Download className="w-4 h-4 text-cyan-700" />
+              <span>EXPORTAR CSV</span>
+            </button>
+            <button
+              id="btn-print-act"
+              onClick={() => setIsPrintModalOpen(true)}
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
+            >
+              <Printer className="w-4 h-4 text-cyan-700" />
+              <span>ACTA OFICIAL</span>
+            </button>
+            <button
+              id="btn-new-record"
+              onClick={() => setIsNewRecordModalOpen(true)}
+              className="glass-option-btn-primary text-xs font-black uppercase tracking-wider"
+            >
+              <Plus className="w-4 h-4" />
+              <span>NUEVA MEDICIÓN</span>
+            </button>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-            Bitácora de Control y Calidad del Agua
-          </h1>
-          <p className="text-sm text-slate-600 mt-1 max-w-2xl">
-            Historial cronológico de muestras de Cloro Residual Libre, pH y Turbiedad para cumplimiento ante MINSA, DIGESA y fiscalizaciones de SUNASS.
-          </p>
-        </div>
+        }
+      />
 
-        {/* Top Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            id="btn-export-csv"
-            onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 shadow-2xs transition-colors"
-          >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
-            <span>Exportar CSV</span>
-          </button>
-          <button
-            id="btn-print-act"
-            onClick={() => setIsPrintModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 shadow-2xs transition-colors"
-          >
-            <Printer className="w-3.5 h-3.5 text-teal-600" />
-            <span>Acta Oficial</span>
-          </button>
-          <button
-            id="btn-new-record"
-            onClick={() => setIsNewRecordModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nueva Medición</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* Filter and Search Bar with Glass Panel */}
+      <div className="glass-panel p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Buscar por punto, sistema u operador..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:border-teal-500 font-medium"
+            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl glass-input font-medium"
           />
         </div>
 
         <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
           {[
             { id: 'all', label: `Todos (${records.length})` },
-            { id: 'compliant', label: `Conforme (${records.filter((r) => r.status === 'compliant').length})` },
-            { id: 'low', label: `Bajo Cloro (${records.filter((r) => r.status === 'low').length})` },
-            { id: 'excess', label: `Exceso (${records.filter((r) => r.status === 'excess').length})` },
+            { id: 'compliant', label: `Conforme (${compliantCount})` },
+            { id: 'low', label: `Bajo Cloro (${lowCount})` },
+            { id: 'excess', label: `Exceso (${excessCount})` },
           ].map((f) => (
             <button
               key={f.id}
               onClick={() => setFilterStatus(f.id as any)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
                 filterStatus === f.id
-                  ? 'bg-teal-600 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'glass-option-btn-primary shadow-xs'
+                  : 'glass-option-btn text-slate-700'
               }`}
             >
               {f.label}
@@ -213,8 +226,8 @@ export const LogbookView: React.FC<LogbookViewProps> = ({
         </div>
       </div>
 
-      {/* Main Records Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      {/* Main Records Table with Glass Panel */}
+      <div className="glass-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-700">
             <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">

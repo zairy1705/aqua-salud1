@@ -36,6 +36,7 @@ import {
   parseAquaIAResponse,
   AquaIAMessage,
 } from '../../services/aquaIaService';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface AquaIAViewProps {
   systems: WaterSystem[];
@@ -253,80 +254,91 @@ Puedes seleccionar cualquiera de las consultas predefinidas o formular una pregu
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 flex flex-col min-h-[calc(100vh-140px)] animate-fadeIn">
-      {/* Top Banner & Header */}
-      <div className="bg-white rounded-2xl border border-teal-100 shadow-sm p-4 sm:p-5 mb-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-teal-600 to-[#00b4d8] flex items-center justify-center text-white shadow-md shadow-teal-500/20 shrink-0">
-              <Bot className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                  AQUA-IA
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
-                    FASE 9 • ASISTENTE SANITARIO
-                  </span>
-                </h1>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                Inteligencia artificial basada <strong className="text-slate-700">exclusivamente en datos verificados</strong> de la plataforma. Cumplimiento estricto de D.S. N.° 031-2010-SA.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 self-end md:self-center flex-wrap">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 flex flex-col min-h-[calc(100vh-140px)] animate-fadeIn space-y-4">
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 9 • ASISTENTE SANITARIO • INTELIGENCIA DETERMINÍSTICA"
+        icon="smart_toy"
+        title="AQUA-IA • ORIENTACIÓN SANITARIA Y NORMATIVA"
+        subtitle="Inteligencia artificial y analítica asistida basada exclusivamente en datos reales verificados de la plataforma. Cumplimiento estricto del D.S. N.° 031-2010-SA."
+        stats={[
+          {
+            label: 'SISTEMAS EN MEMORIA',
+            value: systems.length,
+            subtext: `${records.length} controles de cloro`,
+          },
+          {
+            label: 'ENSAYOS LABORATORIO',
+            value: samples.length,
+            subtext: 'Muestras registradas',
+          },
+          {
+            label: 'ALERTAS VINCULADAS',
+            value: alerts.length,
+            subtext: `${alerts.filter(a => a.status === 'PENDIENTE').length} pendientes`,
+            highlight: alerts.filter(a => a.status === 'PENDIENTE').length > 0,
+          },
+          {
+            label: 'PLANES DE ACCIÓN',
+            value: plans.length,
+            subtext: `${risks.length} riesgos ponderados`,
+          },
+        ]}
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowContextInspector(!showContextInspector)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition"
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
               title="Ver datos disponibles en memoria"
+              type="button"
             >
-              <Database className="w-3.5 h-3.5 text-teal-600" />
-              <span>Contexto Real ({systems.length} Sist / {alerts.length} Alert)</span>
+              <Database className="w-3.5 h-3.5 text-cyan-600" />
+              <span>CONTEXTO ({systems.length} SIST / {alerts.length} ALERTA)</span>
               {showContextInspector ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
 
             <button
               onClick={handleClearHistory}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
-              title="Limpiar conversación"
+              className="glass-option-btn text-xs font-black uppercase tracking-wider text-rose-700"
+              title="Reiniciar conversación"
+              type="button"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 text-rose-600" />
+              <span>REINICIAR CHAT</span>
             </button>
           </div>
-        </div>
+        }
+      />
 
-        {/* Real-time Context Inspector Drawer */}
-        {showContextInspector && (
-          <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs animate-fadeIn">
-            <div className="p-2.5 rounded-lg bg-blue-50/70 border border-blue-100">
-              <span className="text-slate-500 block">Sistemas</span>
-              <strong className="text-blue-900 text-sm">{systems.length} activos</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-emerald-50/70 border border-emerald-100">
-              <span className="text-slate-500 block">Bitácora Cloro</span>
-              <strong className="text-emerald-900 text-sm">{records.length} controles</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-purple-50/70 border border-purple-100">
-              <span className="text-slate-500 block">Muestras Lab</span>
-              <strong className="text-purple-900 text-sm">{samples.length} análisis</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-amber-50/70 border border-amber-100">
-              <span className="text-slate-500 block">Alertas Sanitarias</span>
-              <strong className="text-amber-900 text-sm">{alerts.length} reportadas</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-red-50/70 border border-red-100">
-              <span className="text-slate-500 block">Matriz Riesgos</span>
-              <strong className="text-red-900 text-sm">{risks.length} evaluados</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-teal-50/70 border border-teal-100">
-              <span className="text-slate-500 block">Planes de Acción</span>
-              <strong className="text-teal-900 text-sm">{plans.length} en curso</strong>
-            </div>
+      {/* Real-time Context Inspector Drawer in Glass Style */}
+      {showContextInspector && (
+        <div className="glass-title-panel p-4 rounded-2xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs animate-fadeIn">
+          <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/20 text-cyan-100">
+            <span className="text-[10px] text-cyan-300 uppercase font-black tracking-wider block">SISTEMAS</span>
+            <strong className="text-white text-sm font-mono">{systems.length} activos</strong>
           </div>
-        )}
-      </div>
+          <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/20 text-emerald-100">
+            <span className="text-[10px] text-emerald-300 uppercase font-black tracking-wider block">BITÁCORA CLORO</span>
+            <strong className="text-white text-sm font-mono">{records.length} controles</strong>
+          </div>
+          <div className="p-2.5 rounded-xl bg-cyan-950/40 border border-cyan-500/20 text-cyan-100">
+            <span className="text-[10px] text-cyan-300 uppercase font-black tracking-wider block">MUESTRAS LAB</span>
+            <strong className="text-white text-sm font-mono">{samples.length} análisis</strong>
+          </div>
+          <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/20 text-amber-100">
+            <span className="text-[10px] text-amber-300 uppercase font-black tracking-wider block">ALERTAS SANITARIAS</span>
+            <strong className="text-white text-sm font-mono">{alerts.length} reportadas</strong>
+          </div>
+          <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-500/20 text-rose-100">
+            <span className="text-[10px] text-rose-300 uppercase font-black tracking-wider block">MATRIZ RIESGOS</span>
+            <strong className="text-white text-sm font-mono">{risks.length} evaluados</strong>
+          </div>
+          <div className="p-2.5 rounded-xl bg-teal-950/40 border border-teal-500/20 text-teal-100">
+            <span className="text-[10px] text-teal-300 uppercase font-black tracking-wider block">PLANES DE ACCIÓN</span>
+            <strong className="text-white text-sm font-mono">{plans.length} en curso</strong>
+          </div>
+        </div>
+      )}
 
       {/* Suggested Questions Bar */}
       <div className="mb-4">

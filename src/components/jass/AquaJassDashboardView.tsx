@@ -3,6 +3,7 @@ import { WaterSystem, SamplingRecord, WaterSample } from '../../types';
 import { DosageCalculatorView } from '../DosageCalculatorView';
 import { AquaJassLabResultsView } from './AquaJassLabResultsView';
 import { SafeWaterManualView } from '../manual/SafeWaterManualView';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 export type JassSubModule = 'monitoreo' | 'dosificacion' | 'laboratorio' | 'manuales';
 
@@ -223,51 +224,80 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Offline / Field Mode Banner */}
-      <div className="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-[#003d4c] to-[#00677d] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-sm">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-[#10e7b2]">
-            <span className="material-symbols-outlined text-[20px]">phone_android</span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-hud font-extrabold text-[12px] sm:text-[13px] tracking-wider uppercase">
-                📱 MODO CAMPO JASS
-              </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#10e7b2]/20 border border-[#10e7b2]/40 text-[#10e7b2] text-[9.5px] font-hud font-bold">
-                MÓVIL RURAL
-              </span>
-            </div>
-            <p className="text-[11px] text-cyan-200/90 leading-tight">
-              Diseñado para registros rápidos en captación, reservorio o vivienda de la red.
-            </p>
-          </div>
-        </div>
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 1 • MODO CAMPO JASS • MÓVIL RURAL • D.S. N.° 031-2010-SA"
+        icon="water_drop"
+        title="AQUA-JASS • GESTIÓN COMUNITARIA Y CLORACIÓN RURAL"
+        subtitle="Monitoreo rápido de campo en captación, reservorio o vivienda. Registro táctil simplificado con trazabilidad y sincronización local garantizada."
+        stats={[
+          {
+            label: 'SISTEMAS ASIGNADOS',
+            value: systems.length,
+            subtext: currentSystem ? currentSystem.name : 'Sistemas registrados',
+          },
+          {
+            label: 'ÚLTIMO CLORO LIBRE',
+            value: `${lastChlorine.toFixed(2)} ppm`,
+            subtext: lastChlorine >= 0.5 && lastChlorine <= 2.0 ? 'Dentro de rango legal' : 'Fuera de rango',
+            highlight: lastChlorine < 0.5 || lastChlorine > 2.0,
+          },
+          {
+            label: 'CONTROLES REGISTRADOS',
+            value: systemRecords.length,
+            subtext: 'Bitácora del sistema',
+          },
+          {
+            label: 'ESTADO SINCRONIZACIÓN',
+            value: offlineSyncStatus === 'synced' ? 'ONLINE' : 'LOCAL',
+            subtext: offlineSyncStatus === 'synced' ? 'Almacenamiento al día' : 'Pendiente sync',
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleOpenNewRecordModal}
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
+            >
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              <span>NUEVO CONTROL CLORO</span>
+            </button>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto">
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10.5px] font-hud font-bold uppercase border ${
-              offlineSyncStatus === 'synced'
-                ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-300'
-                : 'bg-amber-500/20 border-amber-400/40 text-amber-300'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-            <span>{offlineSyncStatus === 'synced' ? 'Sincronizado' : 'Almacenamiento Local'}</span>
-          </span>
-        </div>
-      </div>
+            <button
+              type="button"
+              onClick={onOpenDpdCamera}
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
+              title="Lectura asistida de colorimetría DPD con cámara"
+            >
+              <span className="material-symbols-outlined text-base text-cyan-600">photo_camera</span>
+              <span>ESCANEAR DPD-1</span>
+            </button>
 
-      {/* 4 MÓDULOS ESENCIALES DE AQUA-JASS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {onAddSystem && (
+              <button
+                type="button"
+                onClick={() => setIsAddSystemModalOpen(true)}
+                className="glass-option-btn text-xs font-black uppercase tracking-wider"
+              >
+                <span className="material-symbols-outlined text-base">add_business</span>
+                <span>+ SISTEMA</span>
+              </button>
+            )}
+          </div>
+        }
+      />
+
+      {/* 4 MÓDULOS ESENCIALES DE AQUA-JASS EN ESTILO GLASS */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 p-1.5 glass-title-panel rounded-2xl">
         {/* 1. Monitorear Sistemas de Agua */}
         <button
           type="button"
           onClick={() => setActiveSubModule('monitoreo')}
-          className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+          className={`p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer flex items-center gap-3 ${
             activeSubModule === 'monitoreo'
-              ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white border-[#00677d] shadow-md scale-[1.01]'
-              : 'bg-white hover:bg-cyan-50/70 border-slate-200 text-slate-800'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
         >
           <div
@@ -278,10 +308,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
             <span className="material-symbols-outlined text-[22px]">water</span>
           </div>
           <div className="min-w-0">
-            <span className="font-hud font-bold text-[12px] uppercase tracking-tight block truncate">
-              Monitorear Sistemas
+            <span className="font-hud font-black text-[12px] uppercase tracking-wider block truncate">
+              MONITOREAR SISTEMAS
             </span>
-            <span className={`text-[10.5px] block truncate ${activeSubModule === 'monitoreo' ? 'text-cyan-100' : 'text-slate-500'}`}>
+            <span className={`text-[10.5px] block truncate ${activeSubModule === 'monitoreo' ? 'text-cyan-900 font-semibold' : 'text-slate-500'}`}>
               Reservorios y Cloro
             </span>
           </div>
@@ -291,10 +321,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
         <button
           type="button"
           onClick={() => setActiveSubModule('dosificacion')}
-          className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+          className={`p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer flex items-center gap-3 ${
             activeSubModule === 'dosificacion'
-              ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white border-[#00677d] shadow-md scale-[1.01]'
-              : 'bg-white hover:bg-cyan-50/70 border-slate-200 text-slate-800'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
         >
           <div
@@ -305,10 +335,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
             <span className="material-symbols-outlined text-[22px]">calculate</span>
           </div>
           <div className="min-w-0">
-            <span className="font-hud font-bold text-[12px] uppercase tracking-tight block truncate">
-              Dosificar Cloro
+            <span className="font-hud font-black text-[12px] uppercase tracking-wider block truncate">
+              DOSIFICAR CLORO
             </span>
-            <span className={`text-[10.5px] block truncate ${activeSubModule === 'dosificacion' ? 'text-cyan-100' : 'text-slate-500'}`}>
+            <span className={`text-[10.5px] block truncate ${activeSubModule === 'dosificacion' ? 'text-cyan-900 font-semibold' : 'text-slate-500'}`}>
               Cálculo Hipoclorito
             </span>
           </div>
@@ -318,10 +348,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
         <button
           type="button"
           onClick={() => setActiveSubModule('laboratorio')}
-          className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+          className={`p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer flex items-center gap-3 ${
             activeSubModule === 'laboratorio'
-              ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white border-[#00677d] shadow-md scale-[1.01]'
-              : 'bg-white hover:bg-cyan-50/70 border-slate-200 text-slate-800'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
         >
           <div
@@ -332,10 +362,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
             <span className="material-symbols-outlined text-[22px]">science</span>
           </div>
           <div className="min-w-0">
-            <span className="font-hud font-bold text-[12px] uppercase tracking-tight block truncate">
-              Resultados de Lab
+            <span className="font-hud font-black text-[12px] uppercase tracking-wider block truncate">
+              RESULTADOS DE LAB
             </span>
-            <span className={`text-[10.5px] block truncate ${activeSubModule === 'laboratorio' ? 'text-cyan-100' : 'text-slate-500'}`}>
+            <span className={`text-[10.5px] block truncate ${activeSubModule === 'laboratorio' ? 'text-cyan-900 font-semibold' : 'text-slate-500'}`}>
               Ensayos D.S. 031
             </span>
           </div>
@@ -345,10 +375,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
         <button
           type="button"
           onClick={() => setActiveSubModule('manuales')}
-          className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+          className={`p-3 sm:p-3.5 rounded-xl text-left transition-all cursor-pointer flex items-center gap-3 ${
             activeSubModule === 'manuales'
-              ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white border-[#00677d] shadow-md scale-[1.01]'
-              : 'bg-white hover:bg-cyan-50/70 border-slate-200 text-slate-800'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
           }`}
         >
           <div
@@ -359,10 +389,10 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
             <span className="material-symbols-outlined text-[22px]">menu_book</span>
           </div>
           <div className="min-w-0">
-            <span className="font-hud font-bold text-[12px] uppercase tracking-tight block truncate">
-              Manuales de Ayuda
+            <span className="font-hud font-black text-[12px] uppercase tracking-wider block truncate">
+              MANUALES DE AYUDA
             </span>
-            <span className={`text-[10.5px] block truncate ${activeSubModule === 'manuales' ? 'text-cyan-100' : 'text-slate-500'}`}>
+            <span className={`text-[10.5px] block truncate ${activeSubModule === 'manuales' ? 'text-cyan-900 font-semibold' : 'text-slate-500'}`}>
               Agua Segura & PDF
             </span>
           </div>

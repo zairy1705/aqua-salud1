@@ -6,6 +6,7 @@ import { AddResultModal } from './AddResultModal';
 import { ValidateSampleModal } from './ValidateSampleModal';
 import { OfficialReportModal } from './OfficialReportModal';
 import { LabHistoricalChart } from './LabHistoricalChart';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface AquaLabViewProps {
   samples: WaterSample[];
@@ -336,38 +337,50 @@ export const AquaLabView: React.FC<AquaLabViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300 text-left">
-      {/* Module Banner Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#002b35] via-[#004e5f] to-[#00677d] p-6 sm:p-8 text-white shadow-xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#10e7b2] font-hud text-[11px] font-bold uppercase tracking-wider mb-3">
-              <span className="material-symbols-outlined text-[16px]">biotech</span>
-              <span>FASE 3 • MÓDULO DE LABORATORIO OFICIAL</span>
-            </div>
-
-            <h1 className="font-hud font-black text-[26px] sm:text-[34px] tracking-tight text-white mb-2 flex items-center gap-3">
-              <span>🧪 AQUA-LAB</span>
-              <span className="text-[13px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-200 border border-cyan-300/30">
-                v3.0
-              </span>
-            </h1>
-
-            <p className="text-[14px] sm:text-[15px] text-cyan-100/90 max-w-2xl font-normal leading-relaxed">
-              Gestión digital del laboratorio de agua conectado a <strong>AQUA-JASS</strong>. Trazabilidad integral de muestras, 5 etapas de cadena de custodia, registro de ensayos analíticos y validación técnica formal conforme al <strong>D.S. N.° 031-2010-SA</strong>.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 3 • LABORATORIO OFICIAL • D.S. N.° 031-2010-SA • SMEWW"
+        icon="biotech"
+        title="AQUA-LAB • GESTIÓN DE LABORATORIO Y CADENA DE CUSTODIA"
+        subtitle="Gestión digital del laboratorio de agua conectado a AQUA-JASS. Trazabilidad integral de muestras, 5 etapas de cadena de custodia, registro de ensayos analíticos y validación técnica formal conforme al D.S. N.° 031-2010-SA."
+        stats={[
+          {
+            label: 'TOTAL MUESTRAS',
+            value: metrics.total,
+            subtext: 'En bitácora analítica',
+          },
+          {
+            label: 'RECIBIDAS',
+            value: metrics.recibidas,
+            subtext: 'Mesa de entrada',
+          },
+          {
+            label: 'EN ANÁLISIS',
+            value: metrics.enAnalisis,
+            subtext: 'Ensayos en ejecución',
+          },
+          {
+            label: 'PENDIENTE VALIDACIÓN',
+            value: metrics.pendientes,
+            subtext: 'Revisión Dir. Técnico',
+            highlight: metrics.pendientes > 0,
+          },
+          {
+            label: 'INFORMES EMITIDOS',
+            value: metrics.emitidas,
+            subtext: 'Certificación oficial',
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
             {onNavigateToMetals && (
               <button
                 type="button"
                 onClick={onNavigateToMetals}
-                className="px-4 py-3.5 rounded-2xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-300/40 font-hud text-[12px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md hover:scale-[1.02] active:scale-95"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider"
                 title="Abrir Módulo de Metales Pesados y Elementos Traza"
               >
-                <span className="material-symbols-outlined text-[18px] text-amber-300">science</span>
+                <span className="material-symbols-outlined text-base text-amber-500">science</span>
                 <span>☣️ AQUA-METALS</span>
               </button>
             )}
@@ -375,44 +388,44 @@ export const AquaLabView: React.FC<AquaLabViewProps> = ({
             <button
               type="button"
               onClick={() => setIsNewSampleOpen(true)}
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#00b4d8] to-[#10e7b2] hover:from-[#10e7b2] hover:to-[#caf300] text-[#002b1f] font-hud text-[13px] font-black uppercase tracking-wider shadow-[0_8px_25px_rgba(16,231,178,0.4)] hover:shadow-[0_10px_30px_rgba(16,231,178,0.55)] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
             >
-              <span className="material-symbols-outlined text-[20px]">add_circle</span>
+              <span className="material-symbols-outlined text-base">add_circle</span>
               <span>+ NUEVA MUESTRA</span>
             </button>
           </div>
+        }
+      />
+
+      {/* Chain Connection Architecture Diagram in Glass Style */}
+      <div className="glass-title-panel rounded-2xl p-4">
+        <div className="flex items-center gap-2 text-[11px] font-black text-cyan-900 uppercase tracking-wider mb-2.5">
+          <span className="material-symbols-outlined text-[16px] text-cyan-700">hub</span>
+          <span>TRAZABILIDAD TERRITORIAL CONECTADA:</span>
         </div>
 
-        {/* Chain Connection Architecture Diagram */}
-        <div className="mt-6 pt-5 border-t border-white/10">
-          <div className="flex items-center gap-2 text-[11px] font-bold text-cyan-200 uppercase font-hud mb-2.5">
-            <span className="material-symbols-outlined text-[16px] text-[#10e7b2]">hub</span>
-            <span>Trazabilidad Territorial Conectada:</span>
-          </div>
-
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center text-[10.5px]">
-            {[
-              { step: '1', title: 'JASS', desc: 'Comunidad Rural', icon: 'holiday_village' },
-              { step: '2', title: 'SISTEMA', desc: 'Reservorio / Pozo', icon: 'water' },
-              { step: '3', title: 'PUNTO', desc: 'Grifo / Salida', icon: 'pin_drop' },
-              { step: '4', title: 'MUESTRA', desc: 'Código & Custodia', icon: 'science' },
-              { step: '5', title: 'ANÁLISIS', desc: 'Ensayos SMEWW', icon: 'biotech' },
-              { step: '6', title: 'RESULTADO', desc: 'Validación & Dictamen', icon: 'verified' },
-            ].map((node, i) => (
-              <div
-                key={node.title}
-                className="p-2 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center"
-              >
-                <div className="w-6 h-6 rounded-full bg-cyan-400/20 text-[#10e7b2] flex items-center justify-center mb-1">
-                  <span className="material-symbols-outlined text-[14px]">{node.icon}</span>
-                </div>
-                <span className="font-hud font-extrabold text-[10.5px] text-white tracking-wider">
-                  {node.title}
-                </span>
-                <span className="text-[9.5px] text-cyan-200/80">{node.desc}</span>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center text-[10.5px]">
+          {[
+            { step: '1', title: 'JASS', desc: 'Comunidad Rural', icon: 'holiday_village' },
+            { step: '2', title: 'SISTEMA', desc: 'Reservorio / Pozo', icon: 'water' },
+            { step: '3', title: 'PUNTO', desc: 'Grifo / Salida', icon: 'pin_drop' },
+            { step: '4', title: 'MUESTRA', desc: 'Código & Custodia', icon: 'science' },
+            { step: '5', title: 'ANÁLISIS', desc: 'Ensayos SMEWW', icon: 'biotech' },
+            { step: '6', title: 'RESULTADO', desc: 'Validación & Dictamen', icon: 'verified' },
+          ].map((node, i) => (
+            <div
+              key={node.title}
+              className="p-2.5 rounded-xl bg-white/70 border border-white/90 shadow-xs flex flex-col items-center justify-center"
+            >
+              <div className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-800 flex items-center justify-center mb-1">
+                <span className="material-symbols-outlined text-[14px]">{node.icon}</span>
               </div>
-            ))}
-          </div>
+              <span className="font-hud font-black text-[10.5px] text-slate-900 tracking-wider">
+                {node.title}
+              </span>
+              <span className="text-[9.5px] text-slate-500">{node.desc}</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -480,68 +493,68 @@ export const AquaLabView: React.FC<AquaLabViewProps> = ({
       </div>
 
       {/* Tab Navigation: Muestras / Históricos / Microbiología / Fisicoquímica */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-200">
-        <div className="flex flex-wrap items-center gap-2 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-1.5 glass-title-panel rounded-2xl">
+        <div className="flex flex-wrap items-center gap-1.5">
           <button
             type="button"
             onClick={() => setActiveTab('samples')}
-            className={`px-4 py-2 rounded-xl text-[12px] font-hud font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'samples'
-                ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                ? 'glass-option-btn-primary'
+                : 'glass-option-btn'
             }`}
           >
-            <span className="material-symbols-outlined text-[17px] text-[#00b4d8]">inventory_2</span>
-            <span>Muestras & Custodia ({samples.length})</span>
+            <span className="material-symbols-outlined text-[17px]">inventory_2</span>
+            <span>MUESTRAS & CUSTODIA ({samples.length})</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('historical')}
-            className={`px-4 py-2 rounded-xl text-[12px] font-hud font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'historical'
-                ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                ? 'glass-option-btn-primary'
+                : 'glass-option-btn'
             }`}
           >
-            <span className="material-symbols-outlined text-[17px] text-[#10e7b2]">monitoring</span>
-            <span>Gráficos Históricos (Tendencias)</span>
+            <span className="material-symbols-outlined text-[17px]">monitoring</span>
+            <span>GRÁFICOS HISTÓRICOS</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('microbiology')}
-            className={`px-4 py-2 rounded-xl text-[12px] font-hud font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'microbiology'
-                ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                ? 'glass-option-btn-primary'
+                : 'glass-option-btn'
             }`}
           >
             <span className="text-[14px]">🦠</span>
-            <span>Microbiología</span>
+            <span>MICROBIOLOGÍA</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('physicochemistry')}
-            className={`px-4 py-2 rounded-xl text-[12px] font-hud font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
+            className={`px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'physicochemistry'
-                ? 'bg-white text-slate-900 shadow-sm border border-slate-200/80'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                ? 'glass-option-btn-primary'
+                : 'glass-option-btn'
             }`}
           >
             <span className="text-[14px]">⚗️</span>
-            <span>Fisicoquímica</span>
+            <span>FISICOQUÍMICA</span>
           </button>
 
           {onNavigateToMetals && (
             <button
               type="button"
               onClick={onNavigateToMetals}
-              className="px-4 py-2 rounded-xl text-[12px] font-hud font-bold uppercase transition-all flex items-center gap-2 cursor-pointer bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200"
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
             >
               <span className="text-[14px]">☣️</span>
-              <span>AQUA-METALS (Metales)</span>
+              <span>AQUA-METALS</span>
             </button>
           )}
         </div>

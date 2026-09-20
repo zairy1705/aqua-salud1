@@ -56,6 +56,7 @@ import {
   TERRITORY_BOUNDS,
 } from '../../data/territorioData';
 import { GeoreferenceModal } from './GeoreferenceModal';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface AquaTerritorioViewProps {
   systems: WaterSystem[];
@@ -411,43 +412,50 @@ export const AquaTerritorioView: React.FC<AquaTerritorioViewProps> = ({
 
   return (
     <div className="space-y-6 pb-24">
-      {/* 1. Header & GIS Command Center */}
-      <div className="bg-gradient-to-r from-[#002f3a] via-[#004e5f] to-[#00242e] rounded-3xl p-6 text-white shadow-xl border border-cyan-900/50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 font-hud text-[10px] font-extrabold uppercase tracking-wider border border-cyan-400/30">
-                FASE 7 • VIGILANCIA TERRITORIAL
-              </span>
-              <span className="flex items-center gap-1 text-[11px] text-cyan-200/80 font-mono">
-                <Radio className="w-3 h-3 text-emerald-400 animate-pulse" /> GIS WGS84
-                (EPSG:4326) / UTM 17S
-              </span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black font-hud text-white tracking-tight flex items-center gap-3">
-              <MapIcon className="w-7 h-7 text-cyan-400" />
-              AQUA-TERRITORIO
-            </h1>
-            <p className="text-sm text-cyan-100/90 max-w-2xl mt-1 leading-relaxed">
-              Cartografía hidro-sanitaria inteligente y geovigilancia en cuenca.
-              Visualización de fuentes, captaciones, plantas, reservorios y puntos
-              de muestreo con semáforo normativo en tiempo real basado exclusivamente
-              en datos reales de la plataforma.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5">
+      {/* 1. Header & GIS Command Center with GlassTitlePanel */}
+      <GlassTitlePanel
+        badge="FASE 7 • VIGILANCIA TERRITORIAL • GIS WGS84 / UTM 17S"
+        icon="map"
+        title="AQUA-TERRITORIO • GEOVIGILANCIA HIDROSANITARIA"
+        subtitle="Cartografía inteligente y geovigilancia en cuenca. Visualización de fuentes, captaciones, plantas, reservorios y puntos de muestreo con semáforo normativo en tiempo real."
+        stats={[
+          {
+            label: 'SISTEMAS TOTALES',
+            value: semaphoreStats.total,
+            subtext: `${geocodedProfiles.length} en mapa`,
+          },
+          {
+            label: '🟢 ADECUADO',
+            value: semaphoreStats.adecuado,
+            subtext: 'Cumplimiento legal',
+          },
+          {
+            label: '🟡 VIGILANCIA',
+            value: semaphoreStats.vigilancia,
+            subtext: 'Monitoreo preventivo',
+          },
+          {
+            label: '🟠 RIESGO ALTO',
+            value: semaphoreStats.riesgoAlto,
+            subtext: 'Atención prioritaria',
+          },
+          {
+            label: '🔴 CRÍTICO',
+            value: semaphoreStats.critico,
+            subtext: 'Intervención inmediata',
+            highlight: semaphoreStats.critico > 0,
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleExportGeoJSON}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/30 text-xs font-hud font-bold transition-colors cursor-pointer"
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
               title="Descargar capa vectorial en formato estándar GeoJSON para QGIS, ArcGIS y Google Earth"
               type="button"
             >
               <Download className="w-4 h-4" />
-              Exportar GeoJSON (QGIS)
+              <span>EXPORTAR GEOJSON (QGIS)</span>
             </button>
             <button
               onClick={() => {
@@ -459,70 +467,15 @@ export const AquaTerritorioView: React.FC<AquaTerritorioViewProps> = ({
                   setShowUngeocodedModal(true);
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#00b4d8] to-[#10e7b2] text-[#002820] font-hud text-xs font-extrabold shadow-lg hover:shadow-cyan-500/30 transition-all active:scale-95 cursor-pointer"
+              className="glass-option-btn-primary text-xs font-black uppercase tracking-wider"
               type="button"
             >
               <MapPin className="w-4 h-4" />
-              Georreferenciar In Situ
+              <span>GEORREFERENCIAR IN SITU</span>
             </button>
           </div>
-        </div>
-
-        {/* Semaphore Summary Ribbon */}
-        <div className="mt-6 pt-5 border-t border-cyan-800/40 grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="bg-cyan-950/50 backdrop-blur-xs rounded-2xl p-3 border border-cyan-800/30">
-            <span className="text-[10px] text-cyan-300 font-hud font-bold uppercase block">
-              Sistemas Totales
-            </span>
-            <div className="text-xl font-bold font-hud text-white mt-0.5">
-              {semaphoreStats.total}{' '}
-              <span className="text-[10px] text-cyan-300 font-normal">
-                ({geocodedProfiles.length} en mapa)
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-emerald-950/40 backdrop-blur-xs rounded-2xl p-3 border border-emerald-600/30">
-            <span className="text-[10px] text-emerald-300 font-hud font-bold uppercase flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              🟢 Adecuado
-            </span>
-            <div className="text-xl font-bold font-hud text-emerald-200 mt-0.5">
-              {semaphoreStats.adecuado}
-            </div>
-          </div>
-
-          <div className="bg-amber-950/40 backdrop-blur-xs rounded-2xl p-3 border border-amber-600/30">
-            <span className="text-[10px] text-amber-300 font-hud font-bold uppercase flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              🟡 Vigilancia
-            </span>
-            <div className="text-xl font-bold font-hud text-amber-200 mt-0.5">
-              {semaphoreStats.vigilancia}
-            </div>
-          </div>
-
-          <div className="bg-orange-950/40 backdrop-blur-xs rounded-2xl p-3 border border-orange-600/30">
-            <span className="text-[10px] text-orange-300 font-hud font-bold uppercase flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-orange-400" />
-              🟠 Riesgo Alto
-            </span>
-            <div className="text-xl font-bold font-hud text-orange-200 mt-0.5">
-              {semaphoreStats.riesgoAlto}
-            </div>
-          </div>
-
-          <div className="bg-rose-950/40 backdrop-blur-xs rounded-2xl p-3 border border-rose-600/30 col-span-2 sm:col-span-1">
-            <span className="text-[10px] text-rose-300 font-hud font-bold uppercase flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-              🔴 Crítico
-            </span>
-            <div className="text-xl font-bold font-hud text-rose-200 mt-0.5">
-              {semaphoreStats.critico}
-            </div>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Main GIS Grid: Map View (8 cols) + Detail Inspection Drawer (4 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

@@ -7,6 +7,7 @@ import {
 } from '../../types';
 import { getAlertStatusBadge, getRiskLevelBadge } from '../../data/riskAlertEngine';
 import { AlertActionModal } from './AlertActionModal';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface AquaAlertViewProps {
   alerts: AquaAlertItem[];
@@ -100,57 +101,50 @@ export const AquaAlertView: React.FC<AquaAlertViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      {/* HEADER BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-rose-500/30">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-400/40 text-[11px] font-hud font-extrabold uppercase tracking-wider">
-                FASE 6 • SISTEMA DE ALERTA TEMPRANA
-              </span>
-              <span className="text-xs text-rose-200/80 font-mono">D.S. N.° 031-2010-SA</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-hud font-black tracking-tight text-white flex items-center gap-2.5">
-              <span>🚨 AQUA-ALERT</span>
-              <span className="text-rose-400 text-lg font-mono">• Monitoreo Automático de Incidencias</span>
-            </h1>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Generación de alertas basada estrictamente en datos reales existentes. Trazabilidad absoluta: <strong>Resultado → Riesgo → Alerta → Acción → Verificación</strong>.
-            </p>
-          </div>
-
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 6 • SISTEMA DE ALERTA TEMPRANA • D.S. N.° 031-2010-SA"
+        icon="notifications_active"
+        title="AQUA-ALERT • MONITOREO AUTOMÁTICO DE INCIDENCIAS"
+        subtitle="Generación de alertas basada estrictamente en datos reales existentes. Trazabilidad absoluta: Resultado → Riesgo → Alerta → Acción → Verificación."
+        stats={[
+          {
+            label: 'ALERTAS PENDIENTES',
+            value: stats.pendientes,
+            subtext: 'Sin intervención iniciada',
+            highlight: stats.pendientes > 0,
+          },
+          {
+            label: 'EN PROCESO',
+            value: stats.enProceso,
+            subtext: 'Acción correctiva en curso',
+          },
+          {
+            label: 'RESUELTAS',
+            value: stats.resueltas,
+            subtext: 'Conforme en verificación',
+          },
+          {
+            label: 'TOTAL REGISTRADAS',
+            value: stats.total,
+            subtext: 'Trazabilidad y fidelidad 100%',
+          },
+        ]}
+        actions={
           <div className="flex flex-wrap items-center gap-2">
             {onNavigateToRiskMatrix && (
               <button
                 type="button"
                 onClick={() => onNavigateToRiskMatrix()}
-                className="px-4 py-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 font-hud text-[12px] font-bold uppercase transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:scale-[1.02]"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider text-amber-700"
               >
-                <span>⚠️ Ver Matriz AQUA-RISK</span>
+                <span className="material-symbols-outlined text-sm text-amber-600">warning</span>
+                <span>VER MATRIZ AQUA-RISK</span>
               </button>
             )}
           </div>
-        </div>
-
-        {/* ORIGIN POLICY BANNER */}
-        <div className="mt-6 pt-4 border-t border-rose-500/20 flex flex-wrap items-center justify-between gap-3 text-xs font-hud">
-          <div className="flex items-center gap-2 text-rose-200">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span className="font-bold uppercase tracking-wider">
-              Garantía de Fidelidad de Datos:
-            </span>
-            <span className="text-slate-300 font-sans">
-              "No generar alertas basadas en datos inexistentes. No inventar riesgos. Registrar el origen de cada alerta."
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 text-slate-400 text-[11px] font-mono">
-            <span>{stats.total} Alertas Registradas</span>
-            <span>•</span>
-            <span className="text-rose-400 font-bold">{stats.pendientes} Pendientes</span>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* KPI METRIC CARDS */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">

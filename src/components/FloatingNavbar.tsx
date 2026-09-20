@@ -575,21 +575,21 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
           </nav>
         ) : (
           /* MODO SIMPLIFICADO Y AMIGABLE (Los 4 Módulos Solicitados por el Usuario) */
-          <nav className="pointer-events-auto mx-auto max-w-lg sm:max-w-xl bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-full shadow-[0_12px_32px_-6px_rgba(0,103,125,0.28)] border border-cyan-100 p-1.5 sm:p-2 flex items-center justify-between gap-1 sm:gap-1.5">
+          <nav className="pointer-events-auto mx-auto max-w-lg sm:max-w-xl glass-title-panel rounded-2xl sm:rounded-full p-1.5 sm:p-2 flex items-center justify-between gap-1 sm:gap-1.5">
             {/* 1. Monitoreo de Sistemas de Agua */}
             <button
               type="button"
               onClick={() => onTabChange('sistemas')}
               className={`relative flex-1 min-h-[46px] sm:min-h-[48px] px-1.5 sm:px-2 py-1 rounded-xl sm:rounded-full flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
                 currentTab === 'sistemas' || currentTab === 'jass'
-                  ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white shadow-[0_4px_14px_rgba(0,103,125,0.35)] scale-[1.02]'
-                  : 'text-slate-700 hover:text-[#00677d] hover:bg-cyan-50/80 active:scale-95'
+                  ? 'glass-option-btn-primary scale-[1.02]'
+                  : 'glass-option-btn'
               }`}
               title="Monitorear Sistemas de Agua Ingresados"
             >
               <span className="material-symbols-outlined text-[19px] sm:text-[21px]">water_drop</span>
-              <span className="font-hud text-[9px] sm:text-[9.5px] font-bold uppercase tracking-tight mt-0.5 whitespace-nowrap">
-                Sistemas
+              <span className="font-hud text-[9px] sm:text-[9.5px] font-black uppercase tracking-tight mt-0.5 whitespace-nowrap">
+                SISTEMAS
               </span>
               {systemCount > 0 && currentTab !== 'sistemas' && currentTab !== 'jass' && (
                 <span className="absolute top-0.5 right-1 sm:right-2 px-1 min-w-[15px] h-[15px] rounded-full text-[8.5px] font-hud font-bold flex items-center justify-center bg-cyan-100 text-[#00677d] border border-cyan-300">
@@ -604,14 +604,14 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
               onClick={() => onTabChange('dosis')}
               className={`flex-1 min-h-[46px] sm:min-h-[48px] px-1.5 sm:px-2 py-1 rounded-xl sm:rounded-full flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
                 currentTab === 'dosis'
-                  ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white shadow-[0_4px_14px_rgba(0,103,125,0.35)] scale-[1.02]'
-                  : 'text-slate-700 hover:text-[#00677d] hover:bg-cyan-50/80 active:scale-95'
+                  ? 'glass-option-btn-primary scale-[1.02]'
+                  : 'glass-option-btn'
               }`}
               title="Módulo para dosificar el cloro"
             >
               <span className="material-symbols-outlined text-[19px] sm:text-[21px]">calculate</span>
-              <span className="font-hud text-[9px] sm:text-[9.5px] font-bold uppercase tracking-tight mt-0.5 whitespace-nowrap">
-                Dosificar
+              <span className="font-hud text-[9px] sm:text-[9.5px] font-black uppercase tracking-tight mt-0.5 whitespace-nowrap">
+                DOSIFICAR
               </span>
             </button>
 
@@ -621,14 +621,14 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
               onClick={() => onTabChange('lab')}
               className={`flex-1 min-h-[46px] sm:min-h-[48px] px-1.5 sm:px-2 py-1 rounded-xl sm:rounded-full flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
                 currentTab === 'lab'
-                  ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white shadow-[0_4px_14px_rgba(0,103,125,0.35)] scale-[1.02]'
-                  : 'text-slate-700 hover:text-[#00677d] hover:bg-cyan-50/80 active:scale-95'
+                  ? 'glass-option-btn-primary scale-[1.02]'
+                  : 'glass-option-btn'
               }`}
               title="Ingresar y consultar resultados de laboratorio de sistemas de agua"
             >
               <span className="material-symbols-outlined text-[19px] sm:text-[21px]">science</span>
-              <span className="font-hud text-[9px] sm:text-[9.5px] font-bold uppercase tracking-tight mt-0.5 whitespace-nowrap">
-                Laboratorio
+              <span className="font-hud text-[9px] sm:text-[9.5px] font-black uppercase tracking-tight mt-0.5 whitespace-nowrap">
+                LABORATORIO
               </span>
             </button>
 
@@ -638,14 +638,14 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
               onClick={() => onTabChange('manuales')}
               className={`flex-1 min-h-[46px] sm:min-h-[48px] px-1.5 sm:px-2 py-1 rounded-xl sm:rounded-full flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
                 currentTab === 'manuales'
-                  ? 'bg-gradient-to-r from-[#00677d] to-[#009bb8] text-white shadow-[0_4px_14px_rgba(0,103,125,0.35)] scale-[1.02]'
-                  : 'text-slate-700 hover:text-[#00677d] hover:bg-cyan-50/80 active:scale-95'
+                  ? 'glass-option-btn-primary scale-[1.02]'
+                  : 'glass-option-btn'
               }`}
               title="Manuales de ayuda para un consumo de agua segura"
             >
               <span className="material-symbols-outlined text-[19px] sm:text-[21px]">menu_book</span>
-              <span className="font-hud text-[9px] sm:text-[9.5px] font-bold uppercase tracking-tight mt-0.5 whitespace-nowrap">
-                Manuales
+              <span className="font-hud text-[9px] sm:text-[9.5px] font-black uppercase tracking-tight mt-0.5 whitespace-nowrap">
+                MANUALES
               </span>
             </button>
 
@@ -653,12 +653,12 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
             <button
               type="button"
               onClick={() => setIsModulesMenuOpen(!isModulesMenuOpen)}
-              className={`relative flex-1 min-h-[46px] sm:min-h-[48px] px-1.5 sm:px-2 py-1 rounded-xl sm:rounded-full flex flex-col items-center justify-center transition-all duration-200 cursor-pointer border ${
+              className={`relative flex-1 min-h-[46px] sm:min-h-[48px] px-1.5 sm:px-2 py-1 rounded-xl sm:rounded-full flex flex-col items-center justify-center transition-all duration-200 cursor-pointer ${
                 !isCurrentTabInPrimary
-                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white border-teal-500 shadow-[0_4px_14px_rgba(0,155,184,0.35)] scale-[1.02]'
+                  ? 'glass-option-btn-primary scale-[1.02]'
                   : isModulesMenuOpen
-                  ? 'bg-cyan-50 text-[#00677d] border-[#00b4d8]'
-                  : 'border-slate-200/80 bg-slate-50/90 text-slate-700 hover:text-[#00677d] hover:bg-cyan-50 active:scale-95'
+                  ? 'glass-option-btn border-[#00b4d8] bg-cyan-50/80 text-[#00677d]'
+                  : 'glass-option-btn'
               }`}
               title="Ver más herramientas y módulos (Dashboard, Alertas, Territorio)"
             >
@@ -667,10 +667,10 @@ export const FloatingNavbar: React.FC<FloatingNavbarProps> = ({
                   ? currentSecondaryModule.icon
                   : 'apps'}
               </span>
-              <span className="font-hud text-[9px] sm:text-[9.5px] font-bold uppercase tracking-tight mt-0.5 flex items-center gap-0.5 whitespace-nowrap">
+              <span className="font-hud text-[9px] sm:text-[9.5px] font-black uppercase tracking-tight mt-0.5 flex items-center gap-0.5 whitespace-nowrap">
                 {!isCurrentTabInPrimary && currentSecondaryModule
                   ? currentSecondaryModule.shortLabel
-                  : 'Más'}
+                  : 'MÁS'}
                 <span className="material-symbols-outlined text-[10px] leading-none">
                   {isModulesMenuOpen ? 'expand_less' : 'expand_more'}
                 </span>

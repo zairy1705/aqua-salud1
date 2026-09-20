@@ -17,6 +17,7 @@ import {
   FileText,
   Printer,
 } from 'lucide-react';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 import { WaterSystem, SamplingRecord, WaterSample } from '../../types';
 import { evaluateChlorineNormative, getDpdColorHex } from '../../utils/waterMath';
 import { computeMetalAlerts, getMetalsCatalog } from '../../data/metalsData';
@@ -115,157 +116,133 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
   };
 
   return (
-    <div className="space-y-5">
-      {/* Top Banner: Territorial Health Intelligence */}
-      <div className="bg-gradient-to-br from-[#002b36] via-[#003847] to-[#004e5f] text-white rounded-3xl p-5 sm:p-7 shadow-xl border border-cyan-500/30 relative overflow-hidden">
-        {/* Glow ambient effects */}
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-72 h-72 bg-[#10e7b2]/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-60 h-60 bg-[#00b4d8]/15 rounded-full blur-2xl pointer-events-none" />
+    <div className="space-y-5 animate-in fade-in duration-300">
+      {/* Top Banner: GlassTitlePanel */}
+      <GlassTitlePanel
+        badge="FASE 2 • VIGILANCIA SANITARIA TERRITORIAL • MINSA / DIGESA / ATM"
+        normative="D.S. N.° 031-2010-SA"
+        icon="public"
+        title="DASHBOARD TERRITORIAL AQUA-SALUD"
+        subtitle="Monitoreo unificado de la calidad del agua, semáforo de cloro libre residual en reservorios comunales (JASS) y prevención de enfermedades transmitidas por el agua en la cuenca."
+        stats={[
+          {
+            label: 'DIAGNÓSTICO DE CUENCA',
+            value: `${compliancePercentage}%`,
+            subtext: `${compliantSystems.length} de ${systems.length} JASS óptimas`,
+            highlight: compliancePercentage < 70,
+          },
+          {
+            label: 'POBLACIÓN PROTEGIDA',
+            value: `${protectedPopulation.toLocaleString()} hab.`,
+            subtext: `${populationProtectionRate}% con agua segura`,
+          },
+          {
+            label: 'JASS VIGILADAS',
+            value: systems.length,
+            subtext: `${criticalSystems.length} con riesgo crítico`,
+          },
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setIsReportModalOpen(true)}
+              className="glass-option-btn-primary text-xs font-black uppercase tracking-wider"
+            >
+              <FileText className="w-4 h-4" />
+              <span>EMITIR REPORTE ATM / MINSA</span>
+            </button>
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-2 flex-wrap mb-2.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-hud uppercase font-bold tracking-wider bg-[#10e7b2]/20 text-[#10e7b2] border border-[#10e7b2]/40">
-                VIGILANCIA SANITARIA TERRITORIAL
-              </span>
-              <span className="text-[11.5px] text-cyan-200/90 font-hud">
-                D.S. N.° 031-2010-SA • MINSA / DIGESA / ATM
-              </span>
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-hud">
-              Dashboard Territorial AQUA-SALUD
-            </h1>
-            <p className="text-xs sm:text-[13px] text-cyan-100/90 mt-1.5 leading-relaxed">
-              Monitoreo unificado de la calidad del agua, semáforo de cloro libre residual en reservorios comunales (JASS) y prevención de enfermedades transmitidas por el agua en la cuenca.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2.5 mt-4">
-              <button
-                onClick={() => setIsReportModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-[#10e7b2] to-[#00b4d8] hover:from-[#caf300] hover:to-[#10e7b2] text-[#002820] font-hud text-xs font-black rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Emitir Reporte Oficial ATM / MINSA</span>
-              </button>
-
-              <button
-                onClick={handleDownloadReport}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white font-hud text-xs font-bold rounded-xl border border-white/20 transition-all cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5 text-cyan-300" />
-                <span>{reportExportSuccess ? '✓ Descargado' : 'Exportar Datos CSV'}</span>
-              </button>
-            </div>
+            <button
+              onClick={handleDownloadReport}
+              className="glass-option-btn text-xs font-black uppercase tracking-wider"
+            >
+              <Download className="w-4 h-4 text-cyan-600" />
+              <span>{reportExportSuccess ? '✓ DESCARGADO' : 'EXPORTAR CSV'}</span>
+            </button>
           </div>
+        }
+      />
 
-          {/* Quick Territorial Status Pill */}
-          <div className="bg-black/35 backdrop-blur-md p-4 rounded-2xl border border-cyan-400/30 shrink-0 w-full lg:w-72">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-hud uppercase font-bold text-cyan-300 tracking-wider">
-                Diagnóstico de Cuenca
-              </span>
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10e7b2] animate-pulse" />
-            </div>
-
-            <div className="text-2xl font-black font-hud text-white">
-              {compliancePercentage}%{' '}
-              <span className="text-xs font-normal text-cyan-200">conformidad</span>
-            </div>
-            <div className="text-[11px] text-cyan-100/80 mt-1">
-              {compliantSystems.length} de {systems.length} JASS clorando óptimamente.
-            </div>
-
-            <div className="mt-3 pt-2.5 border-t border-cyan-500/20 flex items-center justify-between text-[11px]">
-              <span className="text-cyan-200">Población protegida:</span>
-              <span className="font-hud font-bold text-[#10e7b2]">
-                {protectedPopulation.toLocaleString()} hab. ({populationProtectionRate}%)
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4 Territorial KPI Cards */}
+      {/* 4 Territorial KPI Glass Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Card 1: JASS Vigiladas */}
-        <div className="bg-white rounded-2xl p-4 border border-cyan-100 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-1.5">
-            <span className="text-[10.5px] font-hud font-bold uppercase tracking-wider text-slate-500">
-              JASS Monitoreadas
+        <div className="glass-card p-4.5">
+          <div className="flex items-center justify-between text-slate-500 mb-2">
+            <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-700">
+              JASS MONITOREADAS
             </span>
-            <div className="w-7 h-7 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-cyan-100/80 text-cyan-800 flex items-center justify-center shadow-xs">
               <Droplet className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black font-hud text-slate-900">
             {systems.length}
           </div>
-          <div className="flex items-center gap-1 mt-1 text-[11px] text-slate-500">
-            <span className="font-bold text-emerald-600">{compliantSystems.length} óptimas</span>
-            <span>•</span>
-            <span className="font-bold text-rose-600">{criticalSystems.length} críticas</span>
+          <div className="flex items-center gap-1 mt-1 text-[11px]">
+            <span className="font-extrabold text-emerald-700">{compliantSystems.length} óptimas</span>
+            <span className="text-slate-400">•</span>
+            <span className="font-extrabold text-rose-700">{criticalSystems.length} críticas</span>
           </div>
         </div>
 
         {/* Card 2: Población Beneficiaria */}
-        <div className="bg-white rounded-2xl p-4 border border-cyan-100 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-1.5">
-            <span className="text-[10.5px] font-hud font-bold uppercase tracking-wider text-slate-500">
-              Población en Red
+        <div className="glass-card p-4.5">
+          <div className="flex items-center justify-between text-slate-500 mb-2">
+            <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-700">
+              POBLACIÓN EN RED
             </span>
-            <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shadow-xs">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black font-hud text-slate-900">
             {totalBeneficiaries.toLocaleString()}
           </div>
-          <div className="text-[11px] text-emerald-600 font-bold mt-1">
+          <div className="text-[11px] text-emerald-700 font-extrabold mt-1">
             {populationProtectionRate}% con agua segura
           </div>
         </div>
 
         {/* Card 3: Prevención de EDAs / Diarreas */}
-        <div className="bg-white rounded-2xl p-4 border border-cyan-100 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-1.5">
-            <span className="text-[10.5px] font-hud font-bold uppercase tracking-wider text-slate-500">
-              Impacto en Salud (EDAs)
+        <div className="glass-card p-4.5">
+          <div className="flex items-center justify-between text-slate-500 mb-2">
+            <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-700">
+              IMPACTO EN SALUD (EDAS)
             </span>
-            <div className="w-7 h-7 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-xl bg-teal-100/80 text-teal-800 flex items-center justify-center shadow-xs">
               <TrendingDown className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black font-hud text-teal-600">
+          <div className="text-2xl sm:text-3xl font-black font-hud text-teal-700">
             -42%
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-600 font-medium mt-1">
             Reducción estimada de diarreas infantiles
           </div>
         </div>
 
         {/* Card 4: Riesgo Sanitario Territorial */}
-        <div className="bg-white rounded-2xl p-4 border border-cyan-100 shadow-xs">
-          <div className="flex items-center justify-between text-slate-400 mb-1.5">
-            <span className="text-[10.5px] font-hud font-bold uppercase tracking-wider text-slate-500">
-              Nivel de Riesgo Territorial
+        <div className="glass-card p-4.5">
+          <div className="flex items-center justify-between text-slate-500 mb-2">
+            <span className="text-[10.5px] font-black uppercase tracking-wider text-slate-700">
+              NIVEL RIESGO TERRITORIAL
             </span>
             <div
-              className={`w-7 h-7 rounded-xl flex items-center justify-center ${
-                criticalSystems.length > 0 ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'
+              className={`w-7 h-7 rounded-xl flex items-center justify-center shadow-xs ${
+                criticalSystems.length > 0 ? 'bg-amber-100/80 text-amber-800' : 'bg-emerald-100/80 text-emerald-800'
               }`}
             >
               <Activity className="w-4 h-4" />
             </div>
           </div>
           <div
-            className={`text-xl sm:text-2xl font-black font-hud ${
-              criticalSystems.length > 0 ? 'text-amber-600' : 'text-emerald-600'
+            className={`text-lg sm:text-xl font-black font-hud uppercase ${
+              criticalSystems.length > 0 ? 'text-amber-700' : 'text-emerald-700'
             }`}
           >
             {criticalSystems.length > 0 ? 'RIESGO MODERADO' : 'BAJO RIESGO'}
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-600 font-medium mt-1">
             {criticalSystems.length > 0
               ? `${criticalSystems.length} JASS requiere recarga urgente`
               : 'Cuenca bajo control óptimo'}
@@ -276,7 +253,7 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
       {/* Main Grid: Map & Geo-surveillance (Left) + Early Warnings & Semaphore (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: Interactive Territorial Map of JASS (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-5 border border-cyan-100 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-7 glass-panel p-5 flex flex-col justify-between">
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5">
               <div className="flex items-center gap-2">
@@ -450,17 +427,17 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
         {/* Right Column: Early Warnings & Health Semaphore (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
           {/* Early Health Warnings (Alertas Sanitarias) */}
-          <div className="bg-white rounded-3xl p-5 border border-cyan-100 shadow-sm">
+          <div className="glass-panel p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-xl bg-amber-100/80 text-amber-800 flex items-center justify-center shadow-xs">
                   <AlertTriangle className="w-4 h-4" />
                 </div>
-                <h3 className="text-xs font-bold font-hud text-slate-900 uppercase">
+                <h3 className="text-xs font-black font-hud text-slate-900 uppercase">
                   Alertas Sanitarias Tempranas
                 </h3>
               </div>
-              <span className="text-[10px] font-hud font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+              <span className="text-[10px] font-hud font-extrabold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
                 {criticalSystems.length + warningSystems.length} Activas
               </span>
             </div>
@@ -531,14 +508,14 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
           </div>
 
           {/* AQUA-ALERT & AQUA-METALS Toxicological Warnings */}
-          <div className="bg-white rounded-3xl p-5 border border-amber-200/80 shadow-sm">
+          <div className="glass-panel p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 rounded-xl bg-rose-100/80 text-rose-800 flex items-center justify-center font-bold text-xs shadow-xs">
                   ☣️
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold font-hud text-slate-900 uppercase">
+                  <h3 className="text-xs font-black font-hud text-slate-900 uppercase">
                     AQUA-ALERT • Metales y Elementos Traza
                   </h3>
                   <span className="text-[10px] text-slate-500">
@@ -619,9 +596,9 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
           </div>
 
           {/* Chlorine vs Health Correlation Indicator */}
-          <div className="bg-gradient-to-br from-[#f2fafd] to-cyan-50/80 rounded-3xl p-5 border border-cyan-200/80 shadow-xs">
+          <div className="glass-panel p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-hud uppercase font-bold text-cyan-800">
+              <span className="text-[10px] font-hud uppercase font-black text-cyan-900 tracking-wider">
                 Correlación Cloración - Salud Pública
               </span>
               <Activity className="w-4 h-4 text-cyan-700" />
@@ -634,9 +611,9 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
               El mantenimiento del cloro residual libre sobre 0.50 mg/L en la última vivienda de la red reduce en más del 99.9% la viabilidad de patógenos como <em>Vibrio cholerae</em>, <em>Salmonella</em> y <em>Escherichia coli</em>.
             </p>
 
-            <div className="mt-3 pt-3 border-t border-cyan-200/60 flex items-center justify-between">
-              <span className="text-[11px] font-hud text-slate-500">Estado de Protección:</span>
-              <span className="text-xs font-hud font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+            <div className="mt-3 pt-3 border-t border-cyan-900/10 flex items-center justify-between">
+              <span className="text-[11px] font-hud text-slate-500 font-bold">Estado de Protección:</span>
+              <span className="text-xs font-hud font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
                 ALTA PROTECCIÓN COMUNITARIA
               </span>
             </div>
@@ -645,7 +622,7 @@ export const TerritorialDashboardView: React.FC<TerritorialDashboardViewProps> =
       </div>
 
       {/* Systems Matrix Table (Matriz Territorial de Sistemas JASS) */}
-      <div className="bg-white rounded-3xl p-5 border border-cyan-100 shadow-sm">
+      <div className="glass-panel p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
             <h3 className="text-base font-black font-hud text-[#002f3a] uppercase">

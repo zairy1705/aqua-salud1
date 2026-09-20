@@ -11,6 +11,7 @@ import {
   Droplet,
   FileCheck
 } from 'lucide-react';
+import { GlassTitlePanel } from './GlassTitlePanel';
 import { SamplingRecord, WaterSystem } from '../types';
 import { 
   getDpdColorHex, 
@@ -71,29 +72,38 @@ export const PhotometerHUDView: React.FC<PhotometerHUDViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header */}
-      <div className="border-b border-slate-200/80 pb-5">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-pink-100 text-pink-800 border border-pink-200">
-            Método Estándar 4500-Cl G
-          </span>
-          <span className="text-xs text-slate-500 font-medium">
-            Reactivo DPD #1 (N,N-dietil-p-fenilendiamina)
-          </span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-          Fotómetro y Comparador Digital DPD en Vivo
-        </h1>
-        <p className="text-sm text-slate-600 mt-1 max-w-3xl">
-          Evalúa el color del reactivo de campo o calibra tu fotómetro digital para verificar si el agua cumple estrictamente con el rango de <strong>0.50 a 2.00 mg/L</strong> exigido por el D.S. N.° 031-2010-SA.
-        </p>
-      </div>
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-in fade-in duration-300">
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 1 • LABORATORIO ÓPTICO • MÉTODO ESTÁNDAR 4500-Cl G"
+        normative="D.S. N.° 031-2010-SA • EPA / SMEWW"
+        icon="science"
+        title="FOTÓMETRO Y COMPARADOR DIGITAL DPD EN VIVO"
+        subtitle="Evalúa el viraje colorimétrico del reactivo DPD #1 o calibra tu fotómetro digital para verificar si el agua cumple con el rango de 0.50 a 2.00 mg/L exigido por ley."
+        stats={[
+          {
+            label: 'LECTURA DPD VIRTUAL',
+            value: `${readingPpm.toFixed(2)} mg/L`,
+            subtext: 'Concentración de Cloro Libre',
+          },
+          {
+            label: 'ESTADO SANITARIO',
+            value: evaluation.badgeLabel,
+            subtext: evaluation.verdictText,
+            highlight: evaluation.status !== 'compliant',
+          },
+          {
+            label: 'REACTIVO UTILIZADO',
+            value: 'DPD #1',
+            subtext: 'N,N-dietil-p-fenilendiamina',
+          },
+        ]}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* Visual Colorimeter & Cuvette Interactive Stage (6 cols) */}
-        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col items-center">
+        <div className="lg:col-span-6 glass-panel p-6 flex flex-col items-center">
           
           <div className="w-full flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
@@ -283,21 +293,21 @@ export const PhotometerHUDView: React.FC<PhotometerHUDViewProps> = ({
           </div>
 
           {/* Quick Save to Official Logbook */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <div className="glass-panel p-5 space-y-4">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-              <FileCheck className="w-4 h-4 text-teal-600" />
-              <span>Registrar Muestreo Oficial en Bitácora</span>
+              <FileCheck className="w-4 h-4 text-cyan-700" />
+              <span className="font-extrabold uppercase tracking-wide text-xs text-slate-800">Registrar Muestreo Oficial en Bitácora</span>
             </div>
 
             <div>
-              <label htmlFor="select-system-photometer" className="block text-xs font-semibold text-slate-600 mb-1">
+              <label htmlFor="select-system-photometer" className="block text-xs font-semibold text-slate-700 mb-1">
                 Punto / Sistema de Muestreo:
               </label>
               <select
                 id="select-system-photometer"
                 value={selectedSystemId}
                 onChange={(e) => setSelectedSystemId(e.target.value)}
-                className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 font-medium bg-white focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                className="w-full px-3 py-2 text-xs rounded-xl glass-input font-semibold"
               >
                 {systems.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -311,25 +321,25 @@ export const PhotometerHUDView: React.FC<PhotometerHUDViewProps> = ({
               id="btn-save-photometer-log"
               type="button"
               onClick={handleSaveToLog}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-sm active:scale-95"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 glass-option-btn-primary font-black text-xs uppercase tracking-wider"
             >
               {savedSuccess ? (
                 <>
-                  <CheckCircle className="w-4 h-4 text-emerald-400" />
-                  <span>¡Medición Guardada en la Bitácora!</span>
+                  <CheckCircle className="w-4 h-4 text-emerald-300" />
+                  <span>¡MEDICIÓN GUARDADA EN LA BITÁCORA!</span>
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Certificar y Guardar Lectura ({readingPpm} ppm)</span>
+                  <span>CERTIFICAR Y GUARDAR LECTURA ({readingPpm} PPM)</span>
                 </>
               )}
             </button>
           </div>
 
           {/* Sampling Best Practice Tips */}
-          <div className="bg-slate-50 rounded-2xl border border-slate-200 p-4 text-xs text-slate-600 space-y-1.5">
-            <span className="font-bold text-slate-800 block">
+          <div className="glass-panel p-4 text-xs text-slate-700 space-y-1.5">
+            <span className="font-black text-slate-800 uppercase tracking-wider block text-[11px]">
               Instrucciones de Toma de Muestra DPD:
             </span>
             <p>1. Dejar correr el agua del grifo durante 2 a 3 minutos para purgar agua estancada.</p>

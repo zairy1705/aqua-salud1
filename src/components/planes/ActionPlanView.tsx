@@ -12,6 +12,7 @@ import {
   createActionPlanFromAlert,
 } from '../../data/actionPlanStore';
 import { ActionPlanModal } from './ActionPlanModal';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface ActionPlanViewProps {
   plans: ActionPlanItem[];
@@ -192,25 +193,36 @@ export const ActionPlanView: React.FC<ActionPlanViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      {/* HEADER BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-teal-500/30">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/40 text-[11px] font-hud font-extrabold uppercase tracking-wider">
-                FASE 8 • PLANES DE ACCIÓN
-              </span>
-              <span className="text-xs text-teal-200/80 font-mono">D.S. N.° 031-2010-SA</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-hud font-black tracking-tight text-white flex items-center gap-2.5">
-              <span>📋 GESTIÓN DE ACCIONES CORRECTIVAS</span>
-            </h1>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Transformación de alertas sanitarias en planes de intervención técnica con trazabilidad de ciclo completo:
-              <strong> ALERTA → PLAN DE ACCIÓN → IMPLEMENTACIÓN → EVIDENCIA → VERIFICACIÓN → CIERRE</strong>.
-            </p>
-          </div>
-
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 8 • PLANES DE ACCIÓN • D.S. N.° 031-2010-SA"
+        icon="assignment"
+        title="GESTIÓN DE PLANES DE ACCIÓN Y TRAZABILIDAD"
+        subtitle="Transformación de alertas sanitarias en planes de intervención técnica con ciclo cerrado: ALERTA → PLAN DE ACCIÓN → IMPLEMENTACIÓN → EVIDENCIA → VERIFICACIÓN → CIERRE."
+        stats={[
+          {
+            label: 'PLANES ACTIVOS',
+            value: stats.total - (stats.stageCounts['CIERRE'] || 0),
+            subtext: 'En ejecución técnica',
+          },
+          {
+            label: 'PRIORIDAD CRÍTICA',
+            value: stats.criticos,
+            subtext: 'Intervención inmediata',
+            highlight: stats.criticos > 0,
+          },
+          {
+            label: 'EN VERIFICACIÓN',
+            value: stats.stageCounts['VERIFICACIÓN'] || 0,
+            subtext: 'Pendiente auditoría',
+          },
+          {
+            label: 'PLANES CERRADOS',
+            value: stats.stageCounts['CIERRE'] || 0,
+            subtext: 'Conformidad total',
+          },
+        ]}
+        actions={
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
@@ -219,18 +231,20 @@ export const ActionPlanView: React.FC<ActionPlanViewProps> = ({
                 setAlertToConvert(null);
                 setIsModalOpen(true);
               }}
-              className="px-4 py-2.5 rounded-2xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-hud text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-md hover:scale-[1.02]"
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
             >
-              <span>+ Nuevo Plan Manual</span>
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              <span>NUEVO PLAN MANUAL</span>
             </button>
 
             {onNavigateToAlerts && (
               <button
                 type="button"
                 onClick={onNavigateToAlerts}
-                className="px-4 py-2.5 rounded-2xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-400/40 font-hud text-xs font-bold uppercase transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider text-rose-700"
               >
-                <span>🚨 Ver Alertas ({alerts.filter((a) => a.status === 'PENDIENTE').length})</span>
+                <span className="material-symbols-outlined text-sm text-rose-600">notifications_active</span>
+                <span>ALERTAS ({alerts.filter((a) => a.status === 'PENDIENTE').length})</span>
               </button>
             )}
 
@@ -238,63 +252,67 @@ export const ActionPlanView: React.FC<ActionPlanViewProps> = ({
               <button
                 type="button"
                 onClick={onNavigateToAquaData}
-                className="px-4 py-2.5 rounded-2xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/40 font-hud text-xs font-bold uppercase transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider"
               >
-                <span>📊 AQUA-DATA Analytics</span>
+                <span className="material-symbols-outlined text-sm">analytics</span>
+                <span>AQUA-DATA ANALYTICS</span>
               </button>
             )}
           </div>
+        }
+      />
+
+      {/* WORKFLOW LIFECYCLE BANNER IN GLASS STYLE */}
+      <div className="glass-title-panel rounded-2xl p-4">
+        <div className="text-[11px] font-black uppercase tracking-wider text-cyan-900 mb-2.5 flex items-center justify-between">
+          <span className="flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[16px] text-cyan-700">account_tree</span>
+            <span>FLUJO OPERATIVO NORMATIVO DE TRAZABILIDAD:</span>
+          </span>
+          <span className="text-slate-500 font-sans font-normal text-[11px]">
+            Haga clic en una etapa para filtrar los planes correspondientes
+          </span>
         </div>
 
-        {/* WORKFLOW LIFECYCLE BANNER */}
-        <div className="mt-6 pt-4 border-t border-teal-500/20">
-          <div className="text-[11px] font-hud uppercase tracking-wider text-teal-300 font-bold mb-2 flex items-center justify-between">
-            <span>Flujo Operativo Normativo de Trazabilidad:</span>
-            <span className="text-slate-400 font-sans font-normal">
-              Haga clic en una etapa para filtrar los planes correspondientes
-            </span>
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+          {ACTION_PLAN_STAGES.map((st, idx) => {
+            const isSelected = filterStage === st.id;
+            const count = stats.stageCounts[st.id] || 0;
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            {ACTION_PLAN_STAGES.map((st, idx) => {
-              const isSelected = filterStage === st.id;
-              const count = stats.stageCounts[st.id] || 0;
-
-              return (
-                <button
-                  key={st.id}
-                  type="button"
-                  onClick={() => setFilterStage(filterStage === st.id ? 'todos' : st.id)}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer select-none ${
-                    isSelected
-                      ? 'bg-teal-500 text-slate-950 border-teal-300 shadow-md ring-2 ring-teal-400'
-                      : 'bg-white/5 hover:bg-white/10 border-white/10 text-white'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-hud font-bold ${
-                        isSelected ? 'bg-slate-900 text-white' : 'bg-teal-400/20 text-teal-300'
-                      }`}
-                    >
-                      {idx + 1}
-                    </span>
-                    <span className="text-sm font-mono font-bold">{count}</span>
-                  </div>
-                  <div className="mt-2 text-xs font-hud font-bold tracking-tight truncate">
-                    {st.label}
-                  </div>
-                  <div
-                    className={`text-[10px] truncate mt-0.5 ${
-                      isSelected ? 'text-slate-800' : 'text-slate-400'
+            return (
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => setFilterStage(filterStage === st.id ? 'todos' : st.id)}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                  isSelected
+                    ? 'glass-option-btn-primary shadow-md ring-2 ring-cyan-400'
+                    : 'glass-option-btn'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-mono font-bold ${
+                      isSelected ? 'bg-cyan-900 text-white' : 'bg-cyan-500/20 text-cyan-900'
                     }`}
                   >
-                    {st.description}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                    {idx + 1}
+                  </span>
+                  <span className="text-sm font-mono font-black">{count}</span>
+                </div>
+                <div className="mt-2 text-xs font-black uppercase tracking-tight truncate">
+                  {st.label}
+                </div>
+                <div
+                  className={`text-[10px] truncate mt-0.5 ${
+                    isSelected ? 'text-cyan-950 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {st.description}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

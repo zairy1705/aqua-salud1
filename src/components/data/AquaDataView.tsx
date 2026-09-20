@@ -10,6 +10,7 @@ import {
 } from '../../types';
 import { AquaDataFiltersBar } from './AquaDataFiltersBar';
 import { EmptyDataNotice } from './EmptyDataNotice';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 import {
   LineChart,
   Line,
@@ -532,63 +533,59 @@ export const AquaDataView: React.FC<AquaDataViewProps> = ({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
-      {/* HEADER BANNER */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-cyan-500/30">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-[11px] font-hud font-extrabold uppercase tracking-wider">
-                FASE 8 • DASHBOARD ANALÍTICO
-              </span>
-              <span className="text-xs text-cyan-200/80 font-mono">D.S. N.° 031-2010-SA</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-hud font-black tracking-tight text-white flex items-center gap-2.5">
-              <span>📊 AQUA-DATA</span>
-              <span className="text-cyan-400 text-lg font-mono">• Analítica Hidro-Sanitaria Territorial</span>
-            </h1>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Consolidación analítica in situ de calidad del agua potable rural: evolución temporal, microbiología, fisicoquímica, metales pesados, gestión de alertas y vigilancia comunal JASS.
-            </p>
-          </div>
-
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 8 • DASHBOARD ANALÍTICO • D.S. N.° 031-2010-SA"
+        icon="analytics"
+        title="AQUA-DATA • ANALÍTICA HIDROSANITARIA TERRITORIAL"
+        subtitle="Consolidación analítica in situ de calidad del agua potable rural: evolución temporal de cloro residual, microbiología, fisicoquímica, metales pesados, gestión de alertas y vigilancia comunal JASS."
+        stats={[
+          {
+            label: 'ENSAYOS TOTALES',
+            value: records.length + samples.length,
+            subtext: `${chlorineObservations.length} mediciones cloro`,
+          },
+          {
+            label: 'SISTEMAS AUDITADOS',
+            value: systems.length,
+            subtext: 'Monitoreo territorial',
+          },
+          {
+            label: 'ALERTAS VIGENTES',
+            value: filteredAlerts.filter(a => a.status === 'PENDIENTE').length,
+            subtext: 'Seguimiento de riesgo',
+            highlight: filteredAlerts.filter(a => a.status === 'PENDIENTE').length > 0,
+          },
+          {
+            label: 'PLANES DE ACCIÓN',
+            value: plans.length,
+            subtext: 'En ejecución técnica',
+          },
+        ]}
+        actions={
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={handleExportData}
-              className="px-4 py-2.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-hud text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-md hover:scale-[1.02]"
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
             >
-              <span>📥 Exportar Datos (CSV)</span>
+              <span className="material-symbols-outlined text-base">download</span>
+              <span>EXPORTAR DATOS (CSV)</span>
             </button>
 
             {onNavigateToPlan && (
               <button
                 type="button"
                 onClick={onNavigateToPlan}
-                className="px-4 py-2.5 rounded-2xl bg-teal-500/20 hover:bg-teal-500/30 text-teal-200 border border-teal-400/40 font-hud text-xs font-bold uppercase transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="glass-option-btn text-xs font-black uppercase tracking-wider"
               >
-                <span>📋 Planes de Acción ({plans.length})</span>
+                <span className="material-symbols-outlined text-base">assignment</span>
+                <span>PLANES DE ACCIÓN ({plans.length})</span>
               </button>
             )}
           </div>
-        </div>
-
-        {/* INTEGRITY COMMITMENT NOTICE */}
-        <div className="mt-6 pt-4 border-t border-cyan-500/20 flex flex-wrap items-center justify-between gap-3 text-xs font-hud">
-          <div className="flex items-center gap-2 text-cyan-200">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="font-bold uppercase tracking-wider">Compromiso de Rigor Analítico:</span>
-            <span className="text-slate-300 font-sans">
-              "No inventar datos. Cuando no existan datos suficientes mostrar 'Sin datos suficientes'."
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 text-slate-400 text-[11px] font-mono">
-            <span>{records.length + samples.length} Ensayos Registrados</span>
-            <span>•</span>
-            <span className="text-cyan-400 font-bold">{systems.length} Sistemas</span>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* FILTER BAR */}
       <AquaDataFiltersBar
@@ -602,8 +599,8 @@ export const AquaDataView: React.FC<AquaDataViewProps> = ({
         activeCount={activeFiltersCount}
       />
 
-      {/* ANALYTICAL TOPIC NAVIGATION TABS */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-b border-slate-200">
+      {/* ANALYTICAL TOPIC NAVIGATION TABS IN GLASS STYLE */}
+      <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 glass-title-panel rounded-2xl scrollbar-none">
         {subTabs.map((st) => {
           const isActive = activeSubTab === st.id;
           return (
@@ -611,17 +608,18 @@ export const AquaDataView: React.FC<AquaDataViewProps> = ({
               key={st.id}
               type="button"
               onClick={() => setActiveSubTab(st.id as AquaDataSubTab)}
-              className={`shrink-0 px-4 py-2.5 rounded-2xl text-xs font-hud font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
                 isActive
-                  ? 'bg-cyan-900 text-white shadow-md shadow-cyan-950/20 scale-[1.02]'
-                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                  ? 'glass-option-btn-primary'
+                  : 'glass-option-btn'
               }`}
             >
+              <span className="material-symbols-outlined text-sm">{st.icon}</span>
               <span>{st.label}</span>
               {st.count !== undefined && (
                 <span
-                  className={`px-2 py-0.2 rounded-full text-[10px] font-mono ${
-                    isActive ? 'bg-cyan-700 text-cyan-100' : 'bg-slate-200 text-slate-700'
+                  className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono ${
+                    isActive ? 'bg-cyan-200/40 text-cyan-900 font-bold' : 'bg-slate-200/70 text-slate-800'
                   }`}
                 >
                   {st.count}

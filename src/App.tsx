@@ -403,6 +403,37 @@ export default function App() {
     showToast('✓ Se han eliminado todos los datos de prueba [DEMO] del sistema');
   };
 
+  const handleResetToOriginal = () => {
+    if (
+      window.confirm(
+        '¿Desea restaurar la configuración original? Esta acción reajustará los sistemas de agua, registros de bitácora y muestras de laboratorio a los valores iniciales predeterminados.'
+      )
+    ) {
+      setSystems(INITIAL_SYSTEMS);
+      setRecords(INITIAL_RECORDS);
+      setSamples(INITIAL_LAB_SAMPLES);
+      const generated = generateAutomatedRisksAndAlerts(
+        INITIAL_LAB_SAMPLES,
+        INITIAL_RECORDS,
+        INITIAL_SYSTEMS
+      );
+      setRisks(generated.risks);
+      setAlerts(generated.alerts);
+      setActionPlans([]);
+      try {
+        localStorage.setItem('cloragua_systems', JSON.stringify(INITIAL_SYSTEMS));
+        localStorage.setItem('cloragua_records', JSON.stringify(INITIAL_RECORDS));
+        localStorage.setItem('aqua_lab_samples', JSON.stringify(INITIAL_LAB_SAMPLES));
+        localStorage.removeItem('aqua_risks_persisted');
+        localStorage.removeItem('aqua_alerts_persisted');
+        localStorage.removeItem('aqua_action_plans_persisted');
+      } catch (err) {
+        console.warn('Error resetting localStorage:', err);
+      }
+      showToast('✓ Configuración inicial restaurada con éxito (#btn-reset-to-original)');
+    }
+  };
+
   const handleDemoAddRecord = (rec: SamplingRecord) => {
     setRecords((prev) => [rec, ...prev.filter((r) => r.id !== rec.id)]);
     setSystems((prev) =>
@@ -652,6 +683,8 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onOpenAudit={() => setIsAuditModalOpen(true)}
+            onOpenE2ETestModal={() => setIsE2ETestModalOpen(true)}
+            onResetToOriginal={handleResetToOriginal}
           />
 
           {/* Quick Return Bar for Mobile */}

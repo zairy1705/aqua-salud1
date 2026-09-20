@@ -11,6 +11,7 @@ import { CrmQuoteDetailModal } from './CrmQuoteDetailModal';
 import { PublicQuoteModal } from '../public/PublicQuoteModal';
 import { logAuditEvent } from '../../data/auditStore';
 import { detectRoleTier } from '../../utils/rbac';
+import { GlassTitlePanel } from '../GlassTitlePanel';
 
 interface AquaCrmViewProps {
   activeProfile?: OperatorProfile;
@@ -195,82 +196,89 @@ export const AquaCrmView: React.FC<AquaCrmViewProps> = ({
 
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-6 pb-24 space-y-6">
-      {/* Header & Mode Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-cyan-50 text-[#00677d] material-symbols-outlined text-2xl">
-              chat_bubble
-            </span>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <span>CRM AQUA-SALUD</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-100 text-[#00677d] font-bold">
-                  FASE 10
-                </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold font-mono">
-                  RBAC: {currentUserTier}
-                </span>
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
-                Gestión de cotizaciones, pipeline de ventas, seguimiento comercial e indicadores de laboratorio.
-              </p>
-            </div>
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge={`FASE 10 • CRM AQUA-SALUD • RBAC: ${currentUserTier}`}
+        icon="support_agent"
+        title="CRM COMERCIAL Y ATENCIÓN TÉCNICA"
+        subtitle="Gestión de cotizaciones, pipeline de ventas, seguimiento comercial e indicadores de laboratorio. Trazabilidad rigurosa y atención comunitaria."
+        stats={[
+          {
+            label: 'SOLICITUDES ACTIVAS',
+            value: quotes.filter(q => !q.isDeleted).length,
+            subtext: 'En cartera comercial',
+          },
+          {
+            label: 'NUEVAS COTIZACIONES',
+            value: quotes.filter(q => q.status === 'NUEVA' && !q.isDeleted).length,
+            subtext: 'Por revisar',
+            highlight: quotes.filter(q => q.status === 'NUEVA' && !q.isDeleted).length > 0,
+          },
+          {
+            label: 'APROBADAS',
+            value: quotes.filter(q => q.status === 'APROBADA' && !q.isDeleted).length,
+            subtext: 'En ejecución',
+          },
+          {
+            label: 'VOLUMEN COTIZADO',
+            value: `S/ ${quotes.filter(q => !q.isDeleted).reduce((acc, q) => acc + (q.totalAmount || 0), 0).toLocaleString('es-PE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
+            subtext: 'Monto total proyectado',
+          },
+        ]}
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Open Audit Center Button */}
+            {onOpenAuditModal && (
+              <button
+                type="button"
+                onClick={onOpenAuditModal}
+                className="glass-option-btn text-xs font-black uppercase tracking-wider text-cyan-700"
+                title="Abrir bitácora oficial inmutable de auditoría (D.S. N.° 031-2010-SA)"
+              >
+                <span className="material-symbols-outlined text-base text-[#10e7b2]">verified_user</span>
+                <span>AUDITORÍA SHA-256</span>
+              </button>
+            )}
+
+            {/* New Quote button */}
+            <button
+              type="button"
+              onClick={() => setIsNewQuoteModalOpen(true)}
+              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
+            >
+              <span className="material-symbols-outlined text-base">add_circle</span>
+              <span>NUEVA SOLICITUD</span>
+            </button>
           </div>
-        </div>
+        }
+      />
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Navigation Tabs */}
-          <div className="inline-flex rounded-xl p-1 bg-slate-100 border border-slate-200 text-xs font-semibold">
-            <button
-              type="button"
-              onClick={() => setActiveTab('dashboard')}
-              className={`px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
-                activeTab === 'dashboard'
-                  ? 'bg-white text-[#00677d] shadow-2xs font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="material-symbols-outlined text-base">dashboard</span>
-              <span>Dashboard & Métricas</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('tabla')}
-              className={`px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer ${
-                activeTab === 'tabla'
-                  ? 'bg-white text-[#00677d] shadow-2xs font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="material-symbols-outlined text-base">table_chart</span>
-              <span>Tabla de Solicitudes ({quotes.filter(q => !q.isDeleted).length})</span>
-            </button>
-          </div>
-
-          {/* Open Audit Center Button */}
-          {onOpenAuditModal && (
-            <button
-              type="button"
-              onClick={onOpenAuditModal}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 text-cyan-300 hover:bg-slate-800 text-xs font-bold border border-cyan-500/40 transition-all cursor-pointer"
-              title="Abrir bitácora oficial inmutable de auditoría (D.S. N.° 031-2010-SA)"
-            >
-              <span className="material-symbols-outlined text-base text-[#10e7b2]">verified_user</span>
-              <span>Auditoría SHA-256</span>
-            </button>
-          )}
-
-          {/* New Quote button */}
-          <button
-            type="button"
-            onClick={() => setIsNewQuoteModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#00677d] to-[#00b4d8] text-white text-xs font-bold shadow-sm hover:opacity-95 active:scale-95 transition-all cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-base">add_circle</span>
-            <span>Nueva Solicitud</span>
-          </button>
-        </div>
+      {/* Navigation Tabs in Glass Style */}
+      <div className="flex items-center gap-2 p-1.5 glass-title-panel rounded-2xl">
+        <button
+          type="button"
+          onClick={() => setActiveTab('dashboard')}
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
+            activeTab === 'dashboard'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
+          }`}
+        >
+          <span className="material-symbols-outlined text-base">dashboard</span>
+          <span>DASHBOARD & MÉTRICAS</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('tabla')}
+          className={`flex-1 min-w-[140px] px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
+            activeTab === 'tabla'
+              ? 'glass-option-btn-primary'
+              : 'glass-option-btn'
+          }`}
+        >
+          <span className="material-symbols-outlined text-base">table_chart</span>
+          <span>TABLA DE SOLICITUDES ({quotes.filter(q => !q.isDeleted).length})</span>
+        </button>
       </div>
 
       {/* Main View Mode */}

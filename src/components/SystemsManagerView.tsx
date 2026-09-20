@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   Sliders
 } from 'lucide-react';
+import { GlassTitlePanel } from './GlassTitlePanel';
 import { WaterSystem, WaterSystemType, TankGeometry } from '../types';
 
 interface SystemsManagerViewProps {
@@ -205,36 +206,47 @@ export const SystemsManagerView: React.FC<SystemsManagerViewProps> = ({
     return `${grams} g`;
   };
 
-  return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase bg-teal-100 text-teal-800 border border-teal-200">
-              Infraestructura
-            </span>
-            <span className="text-xs text-slate-500 font-medium">
-              {systems.length} Puntos de Almacenamiento y Red
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-            Gestión de Sistemas y Reservorios
-          </h1>
-          <p className="text-sm text-slate-600 mt-1 max-w-2xl">
-            Control de capacidad, volumen útil almacenado y monitoreo de desinfección para cada infraestructura del servicio de agua potable.
-          </p>
-        </div>
+  const totalVolumeM3 = Math.round(systems.reduce((acc, s) => acc + s.capacityLiters, 0) / 1000);
+  const compliantCount = systems.filter((s) => s.lastChlorinePpm >= 0.5 && s.lastChlorinePpm <= 2.0).length;
 
-        <button
-          id="btn-add-system-modal"
-          onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Registrar Nuevo Tanque</span>
-        </button>
-      </div>
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-in fade-in duration-300">
+      {/* Glassmorphism Title Panel */}
+      <GlassTitlePanel
+        badge="FASE 1 • INFRAESTRUCTURA SANITARIA • SISTEMAS DE AGUA"
+        normative="R.M. N.° 192-2018-VIVIENDA • DIGESA"
+        icon="inventory_2"
+        title="GESTIÓN DE SISTEMAS Y RESERVORIOS"
+        subtitle="Control de capacidad, volumen útil almacenado, dimensiones de ingeniería y monitoreo de desinfección para cada infraestructura comunal o urbana."
+        stats={[
+          {
+            label: 'TOTAL SISTEMAS',
+            value: systems.length,
+            subtext: 'Infraestructuras registradas',
+          },
+          {
+            label: 'CAPACIDAD GLOBAL',
+            value: `${totalVolumeM3} m³`,
+            subtext: `${(totalVolumeM3 * 1000).toLocaleString()} Litros de reserva`,
+          },
+          {
+            label: 'CLORACIÓN CONFORME',
+            value: `${compliantCount} / ${systems.length}`,
+            subtext: compliantCount === systems.length ? '100% de reservorios conformes' : 'Requiere ajuste de dosificación',
+            highlight: compliantCount < systems.length,
+          },
+        ]}
+        actions={
+          <button
+            id="btn-add-system-modal"
+            onClick={() => setIsModalOpen(true)}
+            className="glass-option-btn-primary text-xs font-black uppercase tracking-wider"
+          >
+            <Plus className="w-4 h-4" />
+            <span>REGISTRAR NUEVO TANQUE</span>
+          </button>
+        }
+      />
 
       {/* Grid of Water Systems */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -245,7 +257,7 @@ export const SystemsManagerView: React.FC<SystemsManagerViewProps> = ({
           return (
             <div
               key={sys.id}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:border-teal-300 transition-all flex flex-col justify-between"
+              className="glass-card p-5 flex flex-col justify-between"
             >
               <div>
                 {/* Type Badge & Status */}
