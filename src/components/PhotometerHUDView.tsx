@@ -21,12 +21,18 @@ import {
 
 interface PhotometerHUDViewProps {
   systems: WaterSystem[];
-  onSaveToLogbook: (record: Omit<SamplingRecord, 'id' | 'timestamp'>) => void;
+  records?: SamplingRecord[];
+  onSaveToLogbook?: (record: Omit<SamplingRecord, 'id' | 'timestamp'>) => void;
+  onRecordSaved?: (record: Omit<SamplingRecord, 'id' | 'timestamp'>) => void;
+  onOpenNewRecord?: () => void;
 }
 
 export const PhotometerHUDView: React.FC<PhotometerHUDViewProps> = ({
   systems,
+  records,
   onSaveToLogbook,
+  onRecordSaved,
+  onOpenNewRecord,
 }) => {
   const [readingPpm, setReadingPpm] = useState<number>(1.2);
   const [selectedSystemId, setSelectedSystemId] = useState<string>(systems[0]?.id || '');
@@ -51,21 +57,24 @@ export const PhotometerHUDView: React.FC<PhotometerHUDViewProps> = ({
 
     const currentSystem = systems.find((s) => s.id === selectedSystemId);
 
-    onSaveToLogbook({
-      dateStr,
-      timeStr,
-      systemId: selectedSystemId || 'sys-dpd',
-      systemName: currentSystem ? currentSystem.name : 'Punto de Muestreo DPD',
-      measurementPoint: 'Lectura Fotométrica DPD N° 1 de Campo',
-      freeChlorinePpm: readingPpm,
-      ph: 7.3,
-      turbidityNtu: 0.6,
-      temperatureC: 19.5,
-      status: evaluation.status,
-      operator: currentSystem?.operator || 'Inspector de Calidad',
-      observations: `Verificación colorimétrica DPD: ${readingPpm} mg/L. ${evaluation.verdictText}.`,
-      correctiveAction: evaluation.status !== 'compliant' ? evaluation.recommendation : undefined,
-    });
+    const saveRecordFn = onSaveToLogbook || onRecordSaved;
+    if (saveRecordFn) {
+      saveRecordFn({
+        dateStr,
+        timeStr,
+        systemId: selectedSystemId || 'sys-dpd',
+        systemName: currentSystem ? currentSystem.name : 'Punto de Muestreo DPD',
+        measurementPoint: 'Lectura Fotométrica DPD N° 1 de Campo',
+        freeChlorinePpm: readingPpm,
+        ph: 7.3,
+        turbidityNtu: 0.6,
+        temperatureC: 19.5,
+        status: evaluation.status,
+        operator: currentSystem?.operator || 'Inspector de Calidad',
+        observations: `Verificación colorimétrica DPD: ${readingPpm} mg/L. ${evaluation.verdictText}.`,
+        correctiveAction: evaluation.status !== 'compliant' ? evaluation.recommendation : undefined,
+      });
+    }
 
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3500);

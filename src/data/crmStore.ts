@@ -561,32 +561,57 @@ export function buildWhatsAppContactUrl(
 }
 
 /**
+ * Formats full plain text of quote for email or clipboard copy
+ */
+export function formatQuotePlainText(quote: Partial<CrmQuoteItem>): string {
+  return `Estimado equipo de Laboratorio AQUA-SALUD (aqua.salud.lab@gmail.com),
+
+Se remite la siguiente solicitud de cotización formal de servicios:
+
+• CÓDIGO CORRELATIVO: ${quote.id || 'Pendiente'}
+• CLIENTE / SOLICITANTE: ${quote.clientName || ''}
+• ORGANIZACIÓN / ENTIDAD: ${quote.organization || 'Particular'}
+• TELÉFONO / WHATSAPP: ${quote.phone || ''}
+• CORREO ELECTRÓNICO: ${quote.email || ''}
+• SECTOR: ${quote.sector || 'JASS Comunal'}
+• SERVICIO REQUERIDO: ${quote.service || ''}
+
+DETALLE DEL REQUERIMIENTO:
+"${quote.message || ''}"
+
+FECHA Y HORA DE REGISTRO: ${quote.dateStr || ''} ${quote.timeStr || ''}
+
+---------------------------------------------------------
+Enviado desde el Portal Oficial de AQUA-SALUD & CLORAGUA
+Laboratorio y Asistencia Técnica Sanitaria (D.S. N.° 031-2010-SA)
+Notificación dirigida a: ${CRM_PRIMARY_EMAIL}`;
+}
+
+/**
  * Formats a direct mailto URL to aqua.salud.lab@gmail.com with subject and body
  */
 export function buildMailtoUrl(quote: Partial<CrmQuoteItem>): string {
   const subject = `[COTIZACIÓN ${quote.id || 'NUEVA'}] ${quote.clientName || 'Cliente'} - ${quote.service || 'Servicio'} (${quote.organization || 'Particular'})`;
-  const body = `Estimado equipo de Laboratorio AQUA-SALUD,
-
-Se ha registrado una solicitud de cotización formal:
-
-• CÓDIGO: ${quote.id || 'Pendiente'}
-• CLIENTE: ${quote.clientName || ''}
-• ORGANIZACIÓN: ${quote.organization || 'Particular'}
-• TELÉFONO: ${quote.phone || ''}
-• CORREO: ${quote.email || ''}
-• SECTOR: ${quote.sector || 'JASS Comunal'}
-• SERVICIO SOLICITADO: ${quote.service || ''}
-
-MENSAJE / REQUERIMIENTO:
-${quote.message || ''}
-
-FECHA Y HORA: ${quote.dateStr || ''} ${quote.timeStr || ''}
-
-Atentamente,
-Plataforma Integral AQUA-SALUD & CLORAGUA
-aqua.salud.lab@gmail.com`;
-
+  const body = formatQuotePlainText(quote);
   return `mailto:${CRM_PRIMARY_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+/**
+ * Formats a direct Gmail Web compose URL to aqua.salud.lab@gmail.com
+ */
+export function buildGmailWebUrl(quote: Partial<CrmQuoteItem>): string {
+  const subject = `[COTIZACIÓN ${quote.id || 'NUEVA'}] ${quote.clientName || 'Cliente'} - ${quote.service || 'Servicio'} (${quote.organization || 'Particular'})`;
+  const body = formatQuotePlainText(quote);
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CRM_PRIMARY_EMAIL)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+/**
+ * Formats a direct Outlook Web compose URL to aqua.salud.lab@gmail.com
+ */
+export function buildOutlookWebUrl(quote: Partial<CrmQuoteItem>): string {
+  const subject = `[COTIZACIÓN ${quote.id || 'NUEVA'}] ${quote.clientName || 'Cliente'} - ${quote.service || 'Servicio'} (${quote.organization || 'Particular'})`;
+  const body = formatQuotePlainText(quote);
+  return `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(CRM_PRIMARY_EMAIL)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 /**

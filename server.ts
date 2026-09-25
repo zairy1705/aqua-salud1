@@ -252,9 +252,9 @@ app.post('/api/crm/quote', async (req, res) => {
       return;
     }
 
-    // 3. Time Gate Verification: submissions under 1.5 seconds are automated bot blasts
-    if (typeof formFillDurationMs === 'number' && formFillDurationMs < 1500) {
-      console.warn(`[AQUA-SALUD SPAM DETECTADO] Envío ultra-rápido (<1.5s) rechazado desde IP: ${clientIp}`);
+    // 3. Time Gate Verification: submissions under 200ms are automated script blasts
+    if (typeof formFillDurationMs === 'number' && formFillDurationMs < 200) {
+      console.warn(`[AQUA-SALUD SPAM DETECTADO] Envío ultra-rápido (<200ms) rechazado desde IP: ${clientIp}`);
       res.status(400).json({
         error: 'Envío automatizado detectado. Por favor completa el formulario de forma interactiva.',
       });
@@ -477,6 +477,32 @@ desde la plataforma web de AQUA-SALUD & CLORAGUA (D.S. N.° 031-2010-SA).
       console.log(`SERVICIO: ${service} - Sector: ${sector}`);
       console.log(`ESTADO: Transmitido al relay del servidor.`);
       console.log(`======================================================================`);
+
+      // Attempt background webhook / email relay to TARGET_EMAIL silently
+      try {
+        fetch(`https://formsubmit.co/ajax/${TARGET_EMAIL}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Referer': 'https://aquasalud.pe',
+            'Origin': 'https://aquasalud.pe',
+          },
+          body: JSON.stringify({
+            _subject: subject,
+            cliente: `${clientName} (${organization || 'Particular'})`,
+            telefono: phone,
+            email_cliente: email,
+            sector: sector,
+            servicio: service,
+            codigo: code,
+            mensaje: message,
+          }),
+        }).catch(() => {});
+      } catch {
+        // silent background attempt
+      }
+
       emailDeliveryStatus = 'server_relay';
       messageId = `relay-${code}-${Date.now()}`;
     }

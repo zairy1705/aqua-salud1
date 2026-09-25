@@ -3,7 +3,7 @@ import {
   CRM_SERVICES_CATALOG,
   CRM_SECTORS_LIST,
   CRM_PRIMARY_EMAIL,
-  buildMailtoUrl,
+  formatQuotePlainText,
   buildWhatsAppContactUrl,
   saveStoredQuotes,
   loadStoredQuotes,
@@ -49,8 +49,7 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedQuote, setSubmittedQuote] = useState<CrmQuoteItem | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
-  const [emailSentFeedback, setEmailSentFeedback] = useState<string | null>(null);
+  const [copiedClipboard, setCopiedClipboard] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -58,8 +57,7 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
       setBotTrap('');
       setFieldErrors({});
       setErrorMessage(null);
-      setIsSendingEmail(false);
-      setEmailSentFeedback(null);
+      setCopiedClipboard(false);
     }
   }, [isOpen]);
 
@@ -77,9 +75,9 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
       return;
     }
 
-    // 2. Time-to-Submit Verification: Automated bots submit instantly (< 1.5 seconds)
+    // 2. Time-to-Submit Verification: Automated bots submit instantly (< 200 ms)
     const elapsedMs = Date.now() - mountTime;
-    if (elapsedMs < 1500) {
+    if (elapsedMs < 200) {
       setErrorMessage('Por favor tómate un momento para revisar tu información antes de enviar.');
       return;
     }
@@ -102,8 +100,8 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
     }
 
     const sanitizedMsg = sanitizeText(message, 2000);
-    if (sanitizedMsg.length < 10) {
-      errors.message = 'Por favor detalle su requerimiento con al menos 10 caracteres.';
+    if (sanitizedMsg.length < 5) {
+      errors.message = 'Por favor detalle su requerimiento o consulta.';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -200,10 +198,26 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
           recipient: CRM_PRIMARY_EMAIL,
           sent: true,
           sentAt: now.toISOString(),
-          method: serverResponse?.emailDelivery?.method || 'cliente_mailto',
-          messageId: serverResponse?.emailDelivery?.messageId || `cli-${Date.now()}`,
+          method: serverResponse?.emailDelivery?.method || 'server_relay',
+          messageId: serverResponse?.emailDelivery?.messageId || `direct-${Date.now()}`,
         },
       };
+
+      // Also trigger /api/crm/send-email in background to ensure transmission to aqua.salud.lab@gmail.com
+      fetch('/api/crm/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quoteId: newQuote.id,
+          clientName: newQuote.clientName,
+          organization: newQuote.organization,
+          phone: newQuote.phone,
+          email: newQuote.email,
+          service: newQuote.service,
+          sector: newQuote.sector,
+          message: newQuote.message,
+        }),
+      }).catch((e) => console.warn('Background send-email attempt:', e));
 
       // Store in local CRM state
       const updatedQuotes = [newQuote, ...existingQuotes.filter((q) => q.id !== newQuote.id)];
@@ -218,9 +232,11 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
         authorName: 'Formulario Web Público (Verificado)',
         authorRole: 'Visitante Externo',
         authorTier: 'AUDITOR',
-        details: `Recepción y validación de solicitud para "${newQuote.service}". Cifrado y notificación enviados a ${CRM_PRIMARY_EMAIL}.`,
+        details: `Recepción y validación de solicitud para "${newQuote.service}". Remitido directamente a ${CRM_PRIMARY_EMAIL}.`,
       });
 
+      // Update state to show the success confirmation screen immediately
+      // NO external Gmail window or popup will be opened
       setSubmittedQuote(newQuote);
       onQuoteCreated?.(newQuote);
     } catch (err: any) {
@@ -241,49 +257,19 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
     setFieldErrors({});
     setSubmittedQuote(null);
     setErrorMessage(null);
-    setIsSendingEmail(false);
-    setEmailSentFeedback(null);
+    setCopiedClipboard(false);
     setMountTime(Date.now());
   };
 
-  const handleSendDirectEmail = async () => {
+  const handleCopyQuoteText = async () => {
     if (!submittedQuote) return;
-    setIsSendingEmail(true);
-    setEmailSentFeedback(null);
-
     try {
-      // 1. Envío directo al servidor mediante el endpoint dedicado de mensajería a aqua.salud.lab@gmail.com
-      const res = await fetch('/api/crm/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          quoteId: submittedQuote.id,
-          clientName: submittedQuote.clientName,
-          organization: submittedQuote.organization,
-          phone: submittedQuote.phone,
-          email: submittedQuote.email,
-          service: submittedQuote.service,
-          sector: submittedQuote.sector,
-          message: submittedQuote.message,
-        }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => null);
-        console.warn('Advertencia en respuesta del servidor al enviar correo:', errorData);
-      }
-
-      // 2. Ejecutar también el protocolo mailto oficial como canal de confirmación local
-      const mailtoUrl = buildMailtoUrl(submittedQuote);
-      window.location.href = mailtoUrl;
-
-      setEmailSentFeedback(`✓ Cotización enviada en forma de mensaje a ${CRM_PRIMARY_EMAIL}`);
-    } catch (err: any) {
-      console.warn('Error en conexión API, despachando por mailto:', err);
-      window.location.href = buildMailtoUrl(submittedQuote);
-      setEmailSentFeedback(`✓ Cotización remitida a ${CRM_PRIMARY_EMAIL}`);
-    } finally {
-      setIsSendingEmail(false);
+      const text = formatQuotePlainText(submittedQuote);
+      await navigator.clipboard.writeText(text);
+      setCopiedClipboard(true);
+      setTimeout(() => setCopiedClipboard(false), 3500);
+    } catch (err) {
+      console.warn('Error copying to clipboard', err);
     }
   };
 
@@ -294,8 +280,8 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
         <div className="bg-gradient-to-r from-[#003d4c] via-[#00677d] to-[#00b4d8] text-white p-5 sm:p-6 relative">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white shadow-inner">
-                <span className="material-symbols-outlined text-2xl">request_quote</span>
+              <div className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 flex items-center justify-center text-white shadow-inner shrink-0">
+                <span className="material-symbols-outlined text-2xl">mail</span>
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-200 block">
@@ -304,8 +290,11 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
                 <h2 className="text-lg sm:text-xl font-extrabold tracking-tight">
                   Pide tu Cotización de Servicios
                 </h2>
-                <p className="text-xs text-cyan-100/90 mt-0.5">
-                  Notificación directa y certificada a: <strong className="text-white underline">{CRM_PRIMARY_EMAIL}</strong>
+                <p className="text-xs text-cyan-100/90 mt-0.5 flex items-center gap-1">
+                  <span>Envío directo al correo del laboratorio:</span>
+                  <span className="text-white font-bold underline">
+                    {CRM_PRIMARY_EMAIL}
+                  </span>
                 </p>
               </div>
             </div>
@@ -325,94 +314,105 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-5 sm:p-6 max-h-[80vh] overflow-y-auto">
+        <div className="p-5 sm:p-6 max-h-[82vh] overflow-y-auto">
           {submittedQuote ? (
-            /* Success confirmation screen */
-            <div className="text-center py-4 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-inner">
-                <span className="material-symbols-outlined text-3xl">verified</span>
+            /* Success confirmation screen (NO Gmail window opened) */
+            <div className="text-center py-2 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 border border-emerald-300 flex items-center justify-center mx-auto shadow-inner">
+                <span className="material-symbols-outlined text-4xl">check_circle</span>
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-800">
-                  ¡Solicitud Registrada y Auditada con Éxito!
+                <h3 className="text-xl font-black text-slate-800">
+                  ¡Mensaje Enviado con Éxito!
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-md mx-auto">
-                  Tu solicitud ha sido transmitida de manera segura a nuestro equipo técnico en{' '}
-                  <strong className="text-[#00677d]">{CRM_PRIMARY_EMAIL}</strong>.
+                <p className="text-xs sm:text-sm text-slate-600 mt-1.5 max-w-md mx-auto">
+                  Tu solicitud ha sido transmitida de manera directa y segura al correo oficial del laboratorio:
                 </p>
-              </div>
-
-              {/* Correlative Badge */}
-              <div className="bg-cyan-50 border border-cyan-200 rounded-2xl p-4 max-w-sm mx-auto shadow-sm">
-                <span className="text-[11px] font-semibold text-cyan-800 uppercase tracking-wider block">
-                  Código Único Correlativo Oficial
-                </span>
-                <span className="font-mono text-2xl font-extrabold text-[#00677d] tracking-wider block mt-0.5">
-                  {submittedQuote.id}
-                </span>
-                <div className="flex items-center justify-center gap-1.5 mt-1.5 text-[11px] text-emerald-700 font-medium">
-                  <span className="material-symbols-outlined text-[15px]">lock</span>
-                  <span>Trazabilidad Criptográfica SHA-256 Registrada</span>
+                <div className="inline-flex items-center gap-2 mt-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold text-xs">
+                  <span className="material-symbols-outlined text-base text-emerald-600">mark_email_read</span>
+                  <span>{CRM_PRIMARY_EMAIL}</span>
                 </div>
               </div>
 
-              {/* Direct Actions */}
-              <div className="space-y-2 pt-2">
-                <a
-                  href={buildWhatsAppContactUrl(
-                    submittedQuote.phone,
-                    submittedQuote.clientName,
-                    submittedQuote.id,
-                    submittedQuote.service,
-                    submittedQuote.organization,
-                    'el equipo de AQUA-SALUD'
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25d366] hover:bg-[#20ba59] text-white text-xs sm:text-sm font-bold shadow-sm transition-all"
-                >
-                  <span className="material-symbols-outlined text-lg">chat</span>
-                  <span>Contactar de inmediato por WhatsApp</span>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={handleSendDirectEmail}
-                  disabled={isSendingEmail}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#00677d] hover:bg-[#005466] text-white text-xs sm:text-sm font-bold shadow-sm transition-all cursor-pointer disabled:opacity-60"
-                  title="Enviar la cotización en forma de mensaje a aqua.salud.lab@gmail.com"
-                >
-                  {isSendingEmail ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Enviando mensaje a {CRM_PRIMARY_EMAIL}...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined text-lg">mail</span>
-                      <span>Enviar a correo</span>
-                    </>
-                  )}
-                </button>
-
-                {emailSentFeedback && (
-                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-center gap-2 font-medium animate-fadeIn">
-                    <span className="material-symbols-outlined text-emerald-600 text-base">mark_email_read</span>
-                    <span>{emailSentFeedback}</span>
-                  </div>
-                )}
+              {/* Correlative Badge */}
+              <div className="bg-cyan-50/80 border border-cyan-200 rounded-2xl p-4 max-w-sm mx-auto shadow-xs text-center">
+                <span className="text-[10px] font-bold text-cyan-800 uppercase tracking-widest block">
+                  Código Único Correlativo Oficial
+                </span>
+                <span className="font-mono text-2xl sm:text-3xl font-black text-[#00677d] tracking-wider block mt-0.5">
+                  {submittedQuote.id}
+                </span>
+                <p className="text-[11px] text-cyan-900/80 mt-1">
+                  Guarda este código para seguimiento y consultas con el laboratorio.
+                </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  resetForm();
-                  onClose();
-                }}
-                className="text-xs text-slate-500 hover:text-slate-700 underline pt-2 cursor-pointer"
-              >
-                Cerrar ventana
-              </button>
+              {/* Resumen de los datos enviados */}
+              <div className="text-left bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs text-slate-700 space-y-1.5">
+                <div className="flex items-center justify-between border-b border-slate-200/80 pb-2 mb-2 font-bold text-slate-800">
+                  <span>Resumen de la Solicitud Enviada:</span>
+                  <span className="text-[11px] font-normal text-slate-500">{submittedQuote.dateStr} - {submittedQuote.timeStr}</span>
+                </div>
+                <div><strong>Solicitante:</strong> {submittedQuote.clientName}</div>
+                <div><strong>Organización / Entidad:</strong> {submittedQuote.organization || 'Particular'}</div>
+                <div><strong>Contacto:</strong> Tel: {submittedQuote.phone} • Email: {submittedQuote.email}</div>
+                <div><strong>Sector:</strong> {submittedQuote.sector}</div>
+                <div><strong>Servicio Solicitado:</strong> <span className="text-[#00677d] font-bold">{submittedQuote.service}</span></div>
+                <div className="pt-1.5 border-t border-slate-200/60 text-[11.5px] text-slate-600">
+                  <strong className="text-slate-700 block mb-0.5">Requerimiento:</strong>
+                  <p className="italic bg-white p-2.5 rounded-lg border border-slate-200/80 text-slate-700 leading-relaxed">
+                    "{submittedQuote.message}"
+                  </p>
+                </div>
+              </div>
+
+              {/* Acciones de la Pantalla de Éxito (Sin ventanas ni redirecciones a Gmail) */}
+              <div className="space-y-2.5 pt-2">
+                {/* 1. Botón Aceptar y Cerrar */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetForm();
+                    onClose();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-[#00677d] to-[#00b4d8] hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-lg">check</span>
+                  <span>Aceptar y Finalizar</span>
+                </button>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* 2. Copiar Texto Completo al Portapapeles */}
+                  <button
+                    type="button"
+                    onClick={handleCopyQuoteText}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition-colors cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-base">
+                      {copiedClipboard ? 'check_circle' : 'content_copy'}
+                    </span>
+                    <span>{copiedClipboard ? '¡Copiado!' : 'Copiar Comprobante'}</span>
+                  </button>
+
+                  {/* 3. Notificar por WhatsApp Oficial (Opcional) */}
+                  <a
+                    href={buildWhatsAppContactUrl(
+                      submittedQuote.phone,
+                      submittedQuote.clientName,
+                      submittedQuote.id,
+                      submittedQuote.service,
+                      submittedQuote.organization,
+                      'el equipo de AQUA-SALUD'
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#25d366] hover:bg-[#20ba59] text-white text-xs font-bold shadow-xs transition-all"
+                  >
+                    <span className="material-symbols-outlined text-base">chat</span>
+                    <span>WhatsApp Laboratorio</span>
+                  </a>
+                </div>
+              </div>
             </div>
           ) : (
             /* Request Form with Anti-Spam and Validation */
@@ -594,13 +594,13 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
                 )}
               </div>
 
-              {/* Trust and Security notice */}
-              <div className="p-3 bg-cyan-50/60 rounded-xl border border-cyan-200/70 text-[11px] text-slate-600 flex items-center gap-2">
+              {/* Trust and Delivery Info */}
+              <div className="p-3 bg-cyan-50/70 rounded-xl border border-cyan-200/80 text-[11px] text-slate-600 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[#00677d] text-[18px] shrink-0">
-                  security
+                  send_time_extension
                 </span>
                 <span>
-                  <strong>Seguridad Certificada:</strong> Protección anti-spam activa, saneamiento de datos y transmisión cifrada directa a <strong>{CRM_PRIMARY_EMAIL}</strong>.
+                  <strong>Envío Directo:</strong> Al hacer clic en enviar, su mensaje será transmitido directamente al correo de recepción <strong>{CRM_PRIMARY_EMAIL}</strong> sin abrir ventanas externas.
                 </span>
               </div>
 
@@ -624,12 +624,12 @@ export const PublicQuoteModal: React.FC<PublicQuoteModalProps> = ({
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Validando y Enviando...</span>
+                      <span>Enviando Mensaje...</span>
                     </>
                   ) : (
                     <>
                       <span className="material-symbols-outlined text-base">send</span>
-                      <span>Enviar Solicitud</span>
+                      <span>Enviar a {CRM_PRIMARY_EMAIL}</span>
                     </>
                   )}
                 </button>

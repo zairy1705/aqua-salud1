@@ -407,6 +407,7 @@ export const AquaJassDashboardView: React.FC<AquaJassDashboardViewProps> = ({
             preselectedSystemId={selectedSystemId}
             onSystemSelect={(id) => setSelectedSystemId(id)}
             onRecordSaved={onRecordSaved}
+            onSaveToLogbook={onRecordSaved}
           />
         </div>
       )}

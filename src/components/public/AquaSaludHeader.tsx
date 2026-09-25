@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PublicNavSection } from '../../types';
 import { AquaSaludLogo } from '../common/AquaSaludLogo';
+import {
+  subscribeCalypso,
+  toggleCalypso as toggleCalypsoAudio,
+  soundService,
+} from '../../utils/audioSystem';
 
 interface AquaSaludHeaderProps {
   currentSection: PublicNavSection;
@@ -24,6 +29,21 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
   onOpenE2ETestModal,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCalypsoPlaying, setIsCalypsoPlaying] = useState(false);
+  const [isGameSoundActive, setIsGameSoundActive] = useState(true);
+
+  useEffect(() => {
+    const unsubCalypso = subscribeCalypso((active) => {
+      setIsCalypsoPlaying(active);
+    });
+    const unsubSound = soundService.subscribe((muted) => {
+      setIsGameSoundActive(!muted);
+    });
+    return () => {
+      unsubCalypso();
+      unsubSound();
+    };
+  }, []);
 
   const navItems: { id: PublicNavSection; label: string; icon: string }[] = [
     { id: 'inicio', label: 'INICIO', icon: 'home' },
@@ -146,7 +166,71 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
         </nav>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
+          {/* Calypso BGM Tropical Synth Button */}
+          <div className="relative inline-flex items-center">
+            <button
+              type="button"
+              onClick={() => toggleCalypsoAudio()}
+              className={`h-9 sm:h-10 px-2.5 sm:px-3 rounded-full border flex items-center gap-1.5 transition-all duration-300 shadow-2xs active:scale-95 cursor-pointer select-none ${
+                isCalypsoPlaying
+                  ? 'bg-gradient-to-r from-[#10e7b2]/30 via-[#00b4d8]/25 to-[#caf300]/25 hover:from-[#10e7b2]/50 hover:to-[#00b4d8]/40 border-[#10e7b2] text-[#004e5f] shadow-[0_0_16px_rgba(16,231,178,0.45)]'
+                  : 'bg-[#edf5fc] hover:bg-gradient-to-r hover:from-cyan-100 hover:to-teal-100 border-[#bcc9ce]/50 hover:border-[#00b4d8] text-[#486572] hover:text-[#00677d] hover:shadow-[0_2px_12px_rgba(0,180,216,0.25)]'
+              }`}
+              title={
+                isCalypsoPlaying
+                  ? 'Pausar música Calypso Tropical'
+                  : 'Reproducir música Calypso Tropical (Sintetizador en Vivo)'
+              }
+              aria-label="Control BGM Calypso Tropical"
+            >
+              <span
+                className={`material-symbols-outlined text-[18px] sm:text-[19px] ${
+                  isCalypsoPlaying ? 'animate-bounce text-[#00b4d8]' : 'text-slate-500 hover:text-[#00b4d8]'
+                }`}
+              >
+                {isCalypsoPlaying ? 'music_note' : 'music_off'}
+              </span>
+              <span className="font-hud text-[10px] sm:text-[10.5px] font-extrabold uppercase tracking-wider hidden md:inline">
+                CALYPSO
+              </span>
+              {isCalypsoPlaying && (
+                <div className="flex items-center gap-0.5 h-3">
+                  <span className="w-1 bg-[#10e7b2] rounded-full animate-[pulse_0.4s_ease-in-out_infinite] h-2.5"></span>
+                  <span className="w-1 bg-[#00b4d8] rounded-full animate-[pulse_0.6s_ease-in-out_infinite] h-3.5"></span>
+                  <span className="w-1 bg-[#caf300] rounded-full animate-[pulse_0.3s_ease-in-out_infinite] h-2"></span>
+                </div>
+              )}
+            </button>
+          </div>
+
+          {/* Game sounds / SFX toggle */}
+          <button
+            type="button"
+            onClick={() => soundService.toggleSound()}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all duration-300 shadow-2xs active:scale-95 cursor-pointer relative ${
+              !isGameSoundActive
+                ? 'bg-[#edf5fc] hover:bg-[#ffe8ec] border-[#bcc9ce]/50 hover:border-rose-400 text-[#71828a] hover:text-rose-600'
+                : 'bg-[#10e7b2]/20 hover:bg-[#10e7b2]/40 border-[#10e7b2] hover:border-[#00b4d8] text-[#006c51] hover:text-[#004e5f] shadow-[0_0_12px_rgba(16,231,178,0.4)]'
+            }`}
+            title={
+              !isGameSoundActive
+                ? 'Sonidos de interfaz desactivados (Clic para activar)'
+                : 'Sonidos de interfaz activados (Clic para silenciar)'
+            }
+            aria-label="Control Efectos de Sonido"
+          >
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px]">
+              {!isGameSoundActive ? 'volume_off' : 'sports_esports'}
+            </span>
+            {isGameSoundActive && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10e7b2] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00b4d8]"></span>
+              </span>
+            )}
+          </button>
+
           {onOpenQuoteModal && (
             <button
               type="button"
@@ -261,6 +345,44 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
                   </svg>
                   <span>Instagram</span>
                 </a>
+              </div>
+            </div>
+
+            {/* Audio Controls in Mobile Drawer */}
+            <div className="pt-2 pb-1 border-t border-slate-100">
+              <span className="block text-[11px] font-hud font-bold text-slate-500 uppercase tracking-wider text-center mb-2">
+                Ambiente Sonoro y Música:
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => toggleCalypsoAudio()}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-[11.5px] font-hud font-bold transition-all cursor-pointer ${
+                    isCalypsoPlaying
+                      ? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-400 text-teal-900 shadow-xs'
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-600'
+                  }`}
+                >
+                  <span className={`material-symbols-outlined text-[18px] ${isCalypsoPlaying ? 'animate-bounce text-[#00b4d8]' : 'text-slate-500'}`}>
+                    {isCalypsoPlaying ? 'music_note' : 'music_off'}
+                  </span>
+                  <span>{isCalypsoPlaying ? 'Pausar Calypso BGM' : 'Música Calypso'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => soundService.toggleSound()}
+                  className={`py-2 px-3 rounded-xl border flex items-center justify-center text-[11.5px] font-hud font-bold transition-all cursor-pointer ${
+                    isGameSoundActive
+                      ? 'bg-cyan-50 border-cyan-300 text-[#00677d]'
+                      : 'bg-slate-50 hover:bg-slate-100 border-slate-200 text-slate-400'
+                  }`}
+                  title={isGameSoundActive ? 'Silenciar Efectos' : 'Activar Efectos'}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {isGameSoundActive ? 'sports_esports' : 'volume_off'}
+                  </span>
+                </button>
               </div>
             </div>
 

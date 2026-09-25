@@ -388,370 +388,381 @@ export const SystemsManagerView: React.FC<SystemsManagerViewProps> = ({
 
       {/* Modal for Adding New System with Geometry & Dimensions */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-200 my-8 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div 
+          className="fixed inset-0 z-[100] bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-hidden"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsModalOpen(false);
+          }}
+        >
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] sm:max-h-[88vh] shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Sticky Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 p-4 sm:p-5 shrink-0 bg-white">
               <div>
-                <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                  <Database className="w-5 h-5 text-teal-600" />
-                  Registrar Nuevo Sistema / Reservorio
+                <h2 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <Database className="w-5 h-5 text-teal-600 shrink-0" />
+                  <span>Registrar Nuevo Sistema / Reservorio</span>
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5 line-clamp-1 sm:line-clamp-none">
                   Ingresa las dimensiones métricas para calcular el volumen exacto y la dosificación requerida de cloro.
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100"
+                className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition-colors shrink-0 ml-2 cursor-pointer"
+                aria-label="Cerrar modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitNewSystem} className="space-y-4">
-              {/* Basic Information */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Nombre del Tanque / Sistema:
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="ej. Reservorio Apoyado R-2 (Sector Alto)"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 font-medium"
-                  />
-                </div>
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleSubmitNewSystem} className="flex flex-col flex-1 overflow-hidden min-h-0">
+              <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4">
+                {/* Basic Information */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Nombre del Tanque / Sistema:
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="ej. Reservorio Apoyado R-2 (Sector Alto)"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 font-medium"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Tipo de Infraestructura:
-                  </label>
-                  <select
-                    value={type}
-                    onChange={(e) => setType(e.target.value as WaterSystemType)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-medium bg-white"
-                  >
-                    <option value="reservorio_apoyado">Reservorio Apoyado</option>
-                    <option value="reservorio_elevado">Reservorio Elevado</option>
-                    <option value="cisterna">Cisterna Subterránea</option>
-                    <option value="red_distribucion">Red de Distribución</option>
-                    <option value="pozo_subterraneo">Pozo Subterráneo</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Ubicación / Sector:
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="ej. Sector Norte - Caserío El Molino"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-medium"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Operador Responsable:
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="ej. Téc. Roberto Sánchez (Operador JASS)"
-                    value={operator}
-                    onChange={(e) => setOperator(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-medium"
-                  />
-                </div>
-              </div>
-
-              {/* Geometry Selection Section */}
-              <div className="pt-3 border-t border-slate-100">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Maximize2 className="w-4 h-4 text-teal-600" />
-                    Geometría y Forma del Reservorio:
-                  </label>
-                  <span className="text-[11px] text-slate-500 font-medium">
-                    Selecciona para habilitar dimensiones
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                  {[
-                    { id: 'rectangular' as TankGeometry, label: 'Prisma Rectangular', desc: 'Largo × Ancho × Alto' },
-                    { id: 'cylindrical_vert' as TankGeometry, label: 'Cilindro Vertical', desc: 'Diámetro × Altura' },
-                    { id: 'cylindrical_horiz' as TankGeometry, label: 'Cilindro Horizontal', desc: 'Diámetro × Longitud' },
-                    { id: 'direct_volume' as TankGeometry, label: 'Volumen Directo', desc: 'Ingreso manual en Litros' },
-                  ].map((g) => (
-                    <button
-                      key={g.id}
-                      type="button"
-                      onClick={() => handleGeometryChange(g.id)}
-                      className={`p-2.5 text-left rounded-xl border transition-all ${
-                        geometry === g.id
-                          ? 'bg-teal-50/80 border-teal-500 ring-2 ring-teal-500/20 text-teal-900 shadow-2xs'
-                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                      }`}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Tipo de Infraestructura:
+                    </label>
+                    <select
+                      value={type}
+                      onChange={(e) => setType(e.target.value as WaterSystemType)}
+                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-medium bg-white"
                     >
-                      <div className="font-bold text-xs leading-tight mb-0.5">{g.label}</div>
-                      <div className="text-[10px] text-slate-500">{g.desc}</div>
-                    </button>
-                  ))}
+                      <option value="reservorio_apoyado">Reservorio Apoyado</option>
+                      <option value="reservorio_elevado">Reservorio Elevado</option>
+                      <option value="cisterna">Cisterna Subterránea</option>
+                      <option value="red_distribucion">Red de Distribución</option>
+                      <option value="pozo_subterraneo">Pozo Subterráneo</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Ubicación / Sector:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="ej. Sector Norte - Caserío El Molino"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-medium"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Operador Responsable:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="ej. Téc. Roberto Sánchez (Operador JASS)"
+                      value={operator}
+                      onChange={(e) => setOperator(e.target.value)}
+                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-medium"
+                    />
+                  </div>
                 </div>
 
-                {/* Dimensions inputs based on geometry */}
-                {geometry === 'rectangular' && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Largo (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={length}
-                        onChange={(e) => setLength(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Ancho (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={width}
-                        onChange={(e) => setWidth(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Altura Total (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={height}
-                        onChange={(e) => setHeight(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-teal-800 mb-1">
-                        Tirante Agua (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={waterDepth}
-                        onChange={(e) => setWaterDepth(e.target.value)}
-                        placeholder="ej. 2.4"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-teal-300 font-semibold bg-white"
-                      />
-                    </div>
+                {/* Geometry Selection Section */}
+                <div className="pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                      <Maximize2 className="w-4 h-4 text-teal-600" />
+                      Geometría y Forma del Reservorio:
+                    </label>
+                    <span className="text-[11px] text-slate-500 font-medium">
+                      Selecciona para habilitar dimensiones
+                    </span>
                   </div>
-                )}
 
-                {geometry === 'cylindrical_vert' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Diámetro ⌀ (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={diameter}
-                        onChange={(e) => setDiameter(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Altura Total (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={height}
-                        onChange={(e) => setHeight(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-teal-800 mb-1">
-                        Tirante Agua (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={waterDepth}
-                        onChange={(e) => setWaterDepth(e.target.value)}
-                        placeholder="ej. 2.4"
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-teal-300 font-semibold bg-white"
-                      />
-                    </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                    {[
+                      { id: 'rectangular' as TankGeometry, label: 'Prisma Rectangular', desc: 'Largo × Ancho × Alto' },
+                      { id: 'cylindrical_vert' as TankGeometry, label: 'Cilindro Vertical', desc: 'Diámetro × Altura' },
+                      { id: 'cylindrical_horiz' as TankGeometry, label: 'Cilindro Horizontal', desc: 'Diámetro × Longitud' },
+                      { id: 'direct_volume' as TankGeometry, label: 'Volumen Directo', desc: 'Ingreso manual en Litros' },
+                    ].map((g) => (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => handleGeometryChange(g.id)}
+                        className={`p-2.5 text-left rounded-xl border transition-all ${
+                          geometry === g.id
+                            ? 'bg-teal-50/80 border-teal-500 ring-2 ring-teal-500/20 text-teal-900 shadow-2xs'
+                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="font-bold text-xs leading-tight mb-0.5">{g.label}</div>
+                        <div className="text-[10px] text-slate-500">{g.desc}</div>
+                      </button>
+                    ))}
                   </div>
-                )}
 
-                {geometry === 'cylindrical_horiz' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Diámetro ⌀ (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={diameter}
-                        onChange={(e) => setDiameter(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
+                  {/* Dimensions inputs based on geometry */}
+                  {geometry === 'rectangular' && (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Largo (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={length}
+                          onChange={(e) => setLength(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Ancho (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={width}
+                          onChange={(e) => setWidth(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Altura Total (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={height}
+                          onChange={(e) => setHeight(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-teal-800 mb-1">
+                          Tirante Agua (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.1"
+                          value={waterDepth}
+                          onChange={(e) => setWaterDepth(e.target.value)}
+                          placeholder="ej. 2.4"
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-teal-300 font-semibold bg-white"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                        Longitud Total (m):
-                      </label>
-                      <input
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        value={length}
-                        onChange={(e) => setLength(e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+                  )}
 
-              {/* Real-time Calculation & Chlorine Dosage Assistant Box */}
-              <div className="p-3.5 bg-gradient-to-br from-teal-50 via-teal-50/60 to-cyan-50 rounded-2xl border border-teal-200/80">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5 font-extrabold text-xs text-teal-950">
-                    <Sparkles className="w-4 h-4 text-teal-600" />
-                    <span>Cálculo de Volumen y Dosificación de Cloro</span>
-                  </div>
-                  {geometry !== 'direct_volume' && (
-                    <button
-                      type="button"
-                      onClick={handleApplyCalculatedVolume}
-                      className="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow-2xs transition-colors"
-                    >
-                      Copiar a Capacidad ({calculatedTotalVolumeLiters.toLocaleString()} L)
-                    </button>
+                  {geometry === 'cylindrical_vert' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Diámetro ⌀ (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={diameter}
+                          onChange={(e) => setDiameter(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Altura Total (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={height}
+                          onChange={(e) => setHeight(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-teal-800 mb-1">
+                          Tirante Agua (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.1"
+                          value={waterDepth}
+                          onChange={(e) => setWaterDepth(e.target.value)}
+                          placeholder="ej. 2.4"
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-teal-300 font-semibold bg-white"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {geometry === 'cylindrical_horiz' && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Diámetro ⌀ (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={diameter}
+                          onChange={(e) => setDiameter(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                          Longitud Total (m):
+                        </label>
+                        <input
+                          type="number"
+                          min="0.1"
+                          step="0.1"
+                          value={length}
+                          onChange={(e) => setLength(e.target.value)}
+                          className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 font-semibold bg-white"
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
-                    <span className="block text-[10px] text-slate-500 font-medium">Volumen Geométrico:</span>
-                    <span className="font-extrabold text-teal-950 text-sm">
-                      {(calculatedTotalVolumeLiters / 1000).toFixed(1)} m³
-                    </span>
-                    <span className="block text-[10px] text-slate-500 font-mono">
-                      {calculatedTotalVolumeLiters.toLocaleString()} L
-                    </span>
+                {/* Real-time Calculation & Chlorine Dosage Assistant Box */}
+                <div className="p-3.5 bg-gradient-to-br from-teal-50 via-teal-50/60 to-cyan-50 rounded-2xl border border-teal-200/80">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5 font-extrabold text-xs text-teal-950">
+                      <Sparkles className="w-4 h-4 text-teal-600" />
+                      <span>Cálculo de Volumen y Dosificación de Cloro</span>
+                    </div>
+                    {geometry !== 'direct_volume' && (
+                      <button
+                        type="button"
+                        onClick={handleApplyCalculatedVolume}
+                        className="px-2 py-1 bg-teal-600 hover:bg-teal-700 text-white text-[10px] font-bold rounded-lg shadow-2xs transition-colors"
+                      >
+                        Copiar a Capacidad ({calculatedTotalVolumeLiters.toLocaleString()} L)
+                      </button>
+                    )}
                   </div>
 
-                  <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
-                    <span className="block text-[10px] text-slate-500 font-medium">Agua a Tratar:</span>
-                    <span className="font-extrabold text-teal-950 text-sm">
-                      {(calculatedWaterVolumeLiters / 1000).toFixed(1)} m³
-                    </span>
-                    <span className="block text-[10px] text-slate-500 font-mono">
-                      {calculatedWaterVolumeLiters.toLocaleString()} L ({currentLevelPercent}%)
-                    </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
+                      <span className="block text-[10px] text-slate-500 font-medium">Volumen Geométrico:</span>
+                      <span className="font-extrabold text-teal-950 text-sm">
+                        {(calculatedTotalVolumeLiters / 1000).toFixed(1)} m³
+                      </span>
+                      <span className="block text-[10px] text-slate-500 font-mono">
+                        {calculatedTotalVolumeLiters.toLocaleString()} L
+                      </span>
+                    </div>
+
+                    <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
+                      <span className="block text-[10px] text-slate-500 font-medium">Agua a Tratar:</span>
+                      <span className="font-extrabold text-teal-950 text-sm">
+                        {(calculatedWaterVolumeLiters / 1000).toFixed(1)} m³
+                      </span>
+                      <span className="block text-[10px] text-slate-500 font-mono">
+                        {calculatedWaterVolumeLiters.toLocaleString()} L ({currentLevelPercent}%)
+                      </span>
+                    </div>
+
+                    <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
+                      <span className="block text-[10px] text-slate-500 font-medium">Hipoclorito Calcio (65%):</span>
+                      <span className="font-extrabold text-teal-700 text-sm">
+                        {estHypo65Grams >= 1000 ? `${(estHypo65Grams / 1000).toFixed(2)} kg` : `${estHypo65Grams} g`}
+                      </span>
+                      <span className="block text-[9.5px] text-slate-400">polvo / granulado</span>
+                    </div>
+
+                    <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
+                      <span className="block text-[10px] text-slate-500 font-medium">Hipoclorito Sodio (10%):</span>
+                      <span className="font-extrabold text-cyan-700 text-sm">
+                        {estHypo10Ml >= 1000 ? `${(estHypo10Ml / 1000).toFixed(2)} L` : `${estHypo10Ml} mL`}
+                      </span>
+                      <span className="block text-[9.5px] text-slate-400">lejía líquida</span>
+                    </div>
                   </div>
 
-                  <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
-                    <span className="block text-[10px] text-slate-500 font-medium">Hipoclorito Calcio (65%):</span>
-                    <span className="font-extrabold text-teal-700 text-sm">
-                      {estHypo65Grams >= 1000 ? `${(estHypo65Grams / 1000).toFixed(2)} kg` : `${estHypo65Grams} g`}
+                  <div className="mt-2 text-[10.5px] text-teal-900/80 flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                    <span>
+                      Dosis estequiométrica calculada para alcanzar 1.5 ppm de cloro libre residual (D.S. N.° 031-2010-SA).
                     </span>
-                    <span className="block text-[9.5px] text-slate-400">polvo / granulado</span>
-                  </div>
-
-                  <div className="bg-white/90 p-2 rounded-xl border border-teal-100">
-                    <span className="block text-[10px] text-slate-500 font-medium">Hipoclorito Sodio (10%):</span>
-                    <span className="font-extrabold text-cyan-700 text-sm">
-                      {estHypo10Ml >= 1000 ? `${(estHypo10Ml / 1000).toFixed(2)} L` : `${estHypo10Ml} mL`}
-                    </span>
-                    <span className="block text-[9.5px] text-slate-400">lejía líquida</span>
                   </div>
                 </div>
 
-                <div className="mt-2 text-[10.5px] text-teal-900/80 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  <span>
-                    Dosis estequiométrica calculada para alcanzar 1.5 ppm de cloro libre residual (D.S. N.° 031-2010-SA).
-                  </span>
-                </div>
-              </div>
-
-              {/* Manual Capacity & Level Adjustment */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Capacidad Total Oficial (Litros):
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="100"
-                    step="100"
-                    value={capacityLiters}
-                    onChange={(e) => setCapacityLiters(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-bold text-slate-900 bg-white"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="text-xs font-bold text-slate-700">
-                      Nivel de Llenado Inicial:
+                {/* Manual Capacity & Level Adjustment */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Capacidad Total Oficial (Litros):
                     </label>
-                    <span className="font-mono font-bold text-xs text-teal-800">{currentLevelPercent}%</span>
+                    <input
+                      type="number"
+                      required
+                      min="100"
+                      step="100"
+                      value={capacityLiters}
+                      onChange={(e) => setCapacityLiters(e.target.value)}
+                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 font-bold text-slate-900 bg-white"
+                    />
                   </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={currentLevelPercent}
-                    onChange={(e) => setCurrentLevelPercent(parseInt(e.target.value))}
-                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600 mt-2"
-                  />
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold text-slate-700">
+                        Nivel de Llenado Inicial:
+                      </label>
+                      <span className="font-mono font-bold text-xs text-teal-800">{currentLevelPercent}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={currentLevelPercent}
+                      onChange={(e) => setCurrentLevelPercent(parseInt(e.target.value))}
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600 mt-2"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Modal Actions */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+              {/* Modal Sticky Actions Footer */}
+              <div className="p-3.5 sm:p-4 border-t border-slate-100 bg-slate-50/90 shrink-0 flex items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/80 rounded-xl transition-colors cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
                   <span>Guardar Tanque</span>

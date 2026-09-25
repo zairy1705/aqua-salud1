@@ -562,7 +562,7 @@ export default function App() {
   const selectedSystem = systems.find((s) => s.id === selectedSystemId) || systems[0];
 
   return (
-    <div className="min-h-screen bg-transparent text-[#151d22] flex flex-col font-sans selection:bg-[#00b4d8] selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-transparent text-[#151d22] flex flex-col font-sans selection:bg-[#00b4d8] selection:text-white relative overflow-x-auto min-w-full">
       {/* Interactive Water Ripples & Waves Background */}
       <WaterBackground />
 
@@ -700,7 +700,17 @@ export default function App() {
             {/* 6. SECCIÓN NOSOTROS (¿QUIÉNES SOMOS?): Visible únicamente al hacer clic en NOSOTROS */}
             {publicSection === 'nosotros' && (
               <div id="nosotros" className="animate-in fade-in duration-300">
-                <AquaSaludNosotros />
+                <AquaSaludNosotros
+                  onEnterPlatform={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('inicio');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenQuoteModal={() => {
+                    setPreselectedQuoteService(undefined);
+                    setIsPublicQuoteModalOpen(true);
+                  }}
+                />
               </div>
             )}
 
@@ -1089,6 +1099,7 @@ export default function App() {
                 preselectedSystemId={selectedSystemId}
                 onSystemSelect={(id) => setSelectedSystemId(id)}
                 onRecordSaved={handleCreateRecord}
+                onSaveToLogbook={handleCreateRecord}
               />
             )}
 
@@ -1097,6 +1108,8 @@ export default function App() {
                 systems={systems}
                 records={records}
                 onOpenNewRecord={() => setIsDpdCameraOpen(true)}
+                onRecordSaved={handleCreateRecord}
+                onSaveToLogbook={handleCreateRecord}
               />
             )}
 

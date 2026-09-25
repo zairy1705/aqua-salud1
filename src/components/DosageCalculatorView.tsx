@@ -24,13 +24,17 @@ import { calculateDosage } from '../utils/waterMath';
 
 interface DosageCalculatorViewProps {
   systems: WaterSystem[];
-  onSaveToLogbook: (record: Omit<SamplingRecord, 'id' | 'timestamp'>) => void;
+  onSaveToLogbook?: (record: Omit<SamplingRecord, 'id' | 'timestamp'>) => void;
+  onRecordSaved?: (record: Omit<SamplingRecord, 'id' | 'timestamp'>) => void;
+  onSystemSelect?: (id: string) => void;
   preselectedSystemId?: string;
 }
 
 export const DosageCalculatorView: React.FC<DosageCalculatorViewProps> = ({
   systems,
   onSaveToLogbook,
+  onRecordSaved,
+  onSystemSelect,
   preselectedSystemId,
 }) => {
   const formId = useId();
@@ -64,6 +68,7 @@ export const DosageCalculatorView: React.FC<DosageCalculatorViewProps> = ({
   // Handle system quick load
   const handleSystemChange = (sysId: string) => {
     setSelectedSystemId(sysId);
+    onSystemSelect?.(sysId);
     const found = systems.find((s) => s.id === sysId);
     if (found) {
       if (found.geometry) {
@@ -125,21 +130,24 @@ export const DosageCalculatorView: React.FC<DosageCalculatorViewProps> = ({
     const currentSystem = systems.find((s) => s.id === selectedSystemId);
     const systemName = currentSystem ? currentSystem.name : 'Dosificación en Tanque / Reservorio';
 
-    onSaveToLogbook({
-      dateStr,
-      timeStr,
-      systemId: selectedSystemId || 'sys-custom',
-      systemName,
-      measurementPoint: isShockDisinfection ? 'Desinfección de Choque de Tanque' : 'Dosificación Aplicada a Reservorio',
-      freeChlorinePpm: isShockDisinfection ? 50 : targetChlorinePpm,
-      ph: 7.2,
-      turbidityNtu: 0.5,
-      temperatureC: 20.0,
-      status: isShockDisinfection ? 'excess' : 'compliant',
-      operator: currentSystem?.operator || 'Operador Sanitario',
-      observations: `Dosificación calculada: ${result.commercialDoseAmount} ${result.commercialDoseUnit} de ${result.productName} para ${result.waterVolumeLiters.toLocaleString()} Litros.`,
-      correctiveAction: isShockDisinfection ? 'Desinfección y lavado preventivo de reservorio (50 ppm, 2h).' : undefined,
-    });
+    const saveRecordFn = onRecordSaved || onSaveToLogbook;
+    if (saveRecordFn) {
+      saveRecordFn({
+        dateStr,
+        timeStr,
+        systemId: selectedSystemId || 'sys-custom',
+        systemName,
+        measurementPoint: isShockDisinfection ? 'Desinfección de Choque de Tanque' : 'Dosificación Aplicada a Reservorio',
+        freeChlorinePpm: isShockDisinfection ? 50 : targetChlorinePpm,
+        ph: 7.2,
+        turbidityNtu: 0.5,
+        temperatureC: 20.0,
+        status: isShockDisinfection ? 'excess' : 'compliant',
+        operator: currentSystem?.operator || 'Operador Sanitario',
+        observations: `Dosificación calculada: ${result.commercialDoseAmount} ${result.commercialDoseUnit} de ${result.productName} para ${result.waterVolumeLiters.toLocaleString()} Litros.`,
+        correctiveAction: isShockDisinfection ? 'Desinfección y lavado preventivo de reservorio (50 ppm, 2h).' : undefined,
+      });
+    }
 
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3500);

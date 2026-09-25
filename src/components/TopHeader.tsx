@@ -117,42 +117,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
         {/* Action buttons & profile badge */}
         <div className="flex items-center gap-2">
-          {/* RESTAURAR DATOS (Direct Navigation Button) */}
-          {onResetToOriginal && (
-            <button
-              id="btn-reset-to-original"
-              onClick={onResetToOriginal}
-              className="glass-option-btn text-amber-900 border-amber-300/60 hover:border-amber-500 bg-amber-50/70 hover:bg-amber-100/90 shadow-xs active:scale-95"
-              title="Restaurar o reiniciar datos desde la navegación a los valores originales por defecto"
-              type="button"
-            >
-              <span className="material-symbols-outlined text-[17px] text-amber-600">
-                restart_alt
-              </span>
-              <span className="hidden xl:inline text-[10px] font-black uppercase tracking-wider">
-                RESTAURAR DATOS
-              </span>
-            </button>
-          )}
-
-          {/* SIMULACIÓN E2E / PURGA DEMO */}
-          {onOpenE2ETestModal && (
-            <button
-              id="btn-open-e2e-demo"
-              onClick={onOpenE2ETestModal}
-              className="glass-option-btn text-purple-900 border-purple-300/60 hover:border-purple-500 bg-purple-50/70 hover:bg-purple-100/90 shadow-xs active:scale-95"
-              title="Abrir simulación E2E y purga de datos DEMO"
-              type="button"
-            >
-              <span className="material-symbols-outlined text-[17px] text-purple-600">
-                science
-              </span>
-              <span className="hidden lg:inline text-[10px] font-black uppercase tracking-wider">
-                DEMO / PURGA
-              </span>
-            </button>
-          )}
-
           {/* Operator Info Button */}
           <button
             onClick={onOpenProfile}
