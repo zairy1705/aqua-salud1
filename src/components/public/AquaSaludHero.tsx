@@ -1,8 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  subscribeCalypso,
-  toggleCalypso as toggleCalypsoAudio,
-} from '../../utils/audioSystem';
+import React, { useRef, useEffect } from 'react';
 
 interface AquaSaludHeroProps {
   onLearnMore: () => void;
@@ -35,16 +31,6 @@ export const AquaSaludHero: React.FC<AquaSaludHeroProps> = ({
   onEnterPlatform,
   onCalculateChlorine,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isCalypsoPlaying, setIsCalypsoPlaying] = useState(false);
-  const [motionSpeed, setMotionSpeed] = useState<'sutil' | 'normal'>('sutil');
-
-  useEffect(() => {
-    const unsub = subscribeCalypso((active) => {
-      setIsCalypsoPlaying(active);
-    });
-    return () => unsub();
-  }, []);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ripplesRef = useRef<Ripple[]>([]);
@@ -62,20 +48,9 @@ export const AquaSaludHero: React.FC<AquaSaludHeroProps> = ({
   // Ajustar la velocidad de reproducción del video a movimiento sutil
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.playbackRate = motionSpeed === 'sutil' ? 0.45 : 1.0;
+      videoRef.current.playbackRate = 0.45;
     }
-  }, [motionSpeed]);
-
-  const toggleVideo = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
+  }, []);
 
   // Canvas para ondas sutiles y microburbujas translúcidas
   useEffect(() => {
@@ -248,74 +223,7 @@ export const AquaSaludHero: React.FC<AquaSaludHeroProps> = ({
       />
 
       {/* =========================================================================
-          3. CONTROLES DISCRETOS DE VELOCIDAD, PAUSA Y MÚSICA
-          ========================================================================= */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-        {/* Calypso BGM Tropical Synth Toggle */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleCalypsoAudio();
-          }}
-          className={`px-3 py-1.5 rounded-full backdrop-blur-md border font-hud text-[11px] font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer ${
-            isCalypsoPlaying
-              ? 'bg-gradient-to-r from-[#10e7b2]/30 via-[#00b4d8]/30 to-[#caf300]/30 border-[#10e7b2] text-[#004e5f] shadow-[0_0_14px_rgba(16,231,178,0.4)]'
-              : 'bg-white/85 hover:bg-white border-cyan-200/80 text-[#00677d]'
-          }`}
-          title={
-            isCalypsoPlaying
-              ? 'Pausar música Calypso Tropical'
-              : 'Reproducir música Calypso Tropical (Sintetizador en Vivo)'
-          }
-        >
-          <span
-            className={`material-symbols-outlined text-[16px] ${
-              isCalypsoPlaying ? 'animate-bounce text-[#00b4d8]' : 'text-[#087e98]'
-            }`}
-          >
-            {isCalypsoPlaying ? 'music_note' : 'music_off'}
-          </span>
-          <span>{isCalypsoPlaying ? 'BGM Calypso: Activo' : 'Música Calypso'}</span>
-          {isCalypsoPlaying && (
-            <div className="flex items-center gap-0.5 h-2.5">
-              <span className="w-0.5 bg-[#10e7b2] rounded-full animate-[pulse_0.4s_ease-in-out_infinite] h-2"></span>
-              <span className="w-0.5 bg-[#00b4d8] rounded-full animate-[pulse_0.6s_ease-in-out_infinite] h-2.5"></span>
-            </div>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleVideo();
-          }}
-          className="px-3 py-1.5 rounded-full bg-white/85 hover:bg-white backdrop-blur-md border border-cyan-200/80 text-[#00677d] font-hud text-[11px] font-bold shadow-xs hover:shadow transition-all flex items-center gap-1.5 cursor-pointer"
-          title={isPlaying ? 'Pausar agua' : 'Reanudar agua'}
-        >
-          <span className="material-symbols-outlined text-[15px] text-[#0284c7]">
-            {isPlaying ? 'pause_circle' : 'play_circle'}
-          </span>
-          <span>{isPlaying ? 'Movimiento sutil' : 'Pausado'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setMotionSpeed(prev => prev === 'sutil' ? 'normal' : 'sutil');
-          }}
-          className="hidden sm:inline-flex px-2.5 py-1.5 rounded-full bg-cyan-50/80 hover:bg-cyan-100/90 border border-cyan-200 text-[#087E98] font-hud text-[10.5px] font-bold transition-all items-center gap-1 cursor-pointer"
-          title="Alternar velocidad de animación"
-        >
-          <span className="material-symbols-outlined text-[13px]">tune</span>
-          <span>{motionSpeed === 'sutil' ? 'Velocidad: 0.45x' : 'Velocidad: 1.0x'}</span>
-        </button>
-      </div>
-
-      {/* =========================================================================
-          4. CONTENIDO PRINCIPAL: TARJETA CRISTALINA GLASSMORPHISM DE ALTO CONTRASTE
+          3. CONTENIDO PRINCIPAL: TARJETA CRISTALINA GLASSMORPHISM DE ALTO CONTRASTE
           ========================================================================= */}
       <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 relative z-10">
         <div
