@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PublicNavSection } from '../../types';
+import { AquaSaludLogo } from '../common/AquaSaludLogo';
 
 interface AquaSaludHeaderProps {
   currentSection: PublicNavSection;
@@ -27,46 +28,83 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
   const navItems: { id: PublicNavSection; label: string; icon: string }[] = [
     { id: 'inicio', label: 'INICIO', icon: 'home' },
     { id: 'nosotros', label: 'NOSOTROS', icon: 'groups' },
+    { id: 'ecosistema', label: 'ECOSISTEMA', icon: 'hub' },
     { id: 'servicios', label: 'SERVICIOS', icon: 'science' },
-    { id: 'sectores', label: 'SECTORES', icon: 'domain' },
+    { id: 'soluciones', label: 'SOLUCIONES', icon: 'domain' },
     { id: 'recursos', label: 'RECURSOS', icon: 'menu_book' },
     { id: 'contacto', label: 'CONTACTO', icon: 'contact_support' },
   ];
 
   const whatsappUrl =
-    'https://wa.me/51920221581?text=Hola%20Aqua-salud,%20estoy%20interesado%20en%20apoyo%20t%C3%A9cnico.%20Me%20gustar%C3%ADa%20solicitar%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20servicios.';
+    'https://wa.me/51920221581?text=Hola%20AQUA%20SALUD,%20solicito%20apoyo%20t%C3%A9cnico%20y%20asesor%C3%ADa%20en%20gesti%C3%B3n%20de%20agua%20segura.';
+  const facebookUrl = 'https://www.facebook.com/profile.php?id=61594489960322';
+  const instagramUrl = 'https://www.instagram.com/aqua.salud.lab/';
 
   return (
-    <header className="sticky top-0 w-full z-40 bg-white/90 backdrop-blur-xl border-b border-cyan-900/10 shadow-[0_4px_24px_rgba(0,103,125,0.06)]">
-      {/* Top Banner with WhatsApp direct link */}
-      <div className="bg-gradient-to-r from-[#003d4c] via-[#00677d] to-[#004e5f] text-white py-1.5 px-4 text-[11px] sm:text-[12px] font-hud flex items-center justify-between">
-        <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#10e7b2] animate-pulse"></span>
-            <span className="font-medium text-cyan-100 hidden sm:inline">
-              Vigilancia Sanitaria y Gestión Territorial del Agua
+    <header className="sticky top-0 w-full z-40 bg-white/95 backdrop-blur-xl border-b border-cyan-900/10 shadow-[0_4px_24px_rgba(6,59,74,0.06)]">
+      {/* Top Banner with Social Media (Facebook, Instagram), WhatsApp & Slogan */}
+      <div className="bg-gradient-to-r from-[#063B4A] via-[#087E98] to-[#031E26] text-white py-1.5 px-4 text-[11px] sm:text-[12px] font-hud">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 truncate">
+            <span className="inline-block w-2 h-2 rounded-full bg-[#10B981] animate-pulse shrink-0" />
+            <span className="font-semibold text-[#8BE6C2] hidden sm:inline shrink-0">
+              AQUA SALUD:
             </span>
-            <span className="font-bold text-white tracking-wide">
-              "Del control del agua a la protección de la salud."
+            <span className="font-medium text-white tracking-wide truncate">
+              Tecnología para el agua segura • CIENCIA · AGUA · SALUD
             </span>
           </div>
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/40 text-white font-bold transition-all"
-            title="Abrir WhatsApp oficial"
-          >
-            <span className="material-symbols-outlined text-[15px] text-[#25D366]">chat</span>
-            <span className="hidden md:inline">WhatsApp — Soporte técnico:</span>
-            <span className="text-[#25D366] font-extrabold tracking-wider">920221581</span>
-          </a>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Facebook Link */}
+            <a
+              href={facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#1877F2]/25 hover:bg-[#1877F2]/40 border border-[#1877F2]/60 text-white font-bold transition-all text-[11px] shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
+              title="Síguenos en Facebook: AQUA SALUD"
+              aria-label="Facebook de AQUA SALUD"
+            >
+              <svg className="w-3.5 h-3.5 fill-white shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+              <span className="hidden md:inline">Facebook</span>
+            </a>
+
+            {/* Instagram Link */}
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#833AB4]/30 via-[#FD1D1D]/30 to-[#F77737]/30 hover:from-[#833AB4]/50 hover:via-[#FD1D1D]/50 hover:to-[#F77737]/50 border border-pink-400/50 text-white font-bold transition-all text-[11px] shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
+              title="Síguenos en Instagram: @aqua.salud.lab"
+              aria-label="Instagram de AQUA SALUD"
+            >
+              <svg className="w-3.5 h-3.5 fill-white shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+              <span className="hidden md:inline">Instagram</span>
+            </a>
+
+            {/* WhatsApp Link */}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/40 text-white font-bold transition-all text-[11px]"
+              title="Abrir WhatsApp oficial de soporte técnico"
+            >
+              <span className="material-symbols-outlined text-[15px] text-[#25D366]">chat</span>
+              <span className="hidden lg:inline">Soporte directo:</span>
+              <span className="text-[#25D366] font-extrabold tracking-wider">920221581</span>
+            </a>
+          </div>
         </div>
       </div>
 
       {/* Main Navbar */}
-      <div className="max-w-6xl mx-auto px-4 h-18 sm:h-20 flex items-center justify-between gap-3">
-        {/* Brand identity */}
+      <div className="max-w-7xl mx-auto px-4 h-18 sm:h-20 flex items-center justify-between gap-3">
+        {/* Official Brand Identity */}
         <div
           onClick={() => {
             if (isInsidePlatform && onReturnToPublic) {
@@ -75,47 +113,30 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
               onNavigateSection('inicio');
             }
           }}
-          className="flex items-center gap-3 cursor-pointer select-none group"
-          title="Ir al inicio de AQUA-SALUD"
+          className="cursor-pointer select-none"
+          title="Ir al inicio de AQUA SALUD"
         >
-          <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#00b4d8] to-[#00677d] flex items-center justify-center text-white shadow-[0_4px_16px_rgba(0,180,216,0.35)] group-hover:scale-105 transition-all">
-            <span className="material-symbols-outlined text-[26px]">water_drop</span>
-            <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#10e7b2] border-2 border-white flex items-center justify-center text-[8px] font-black text-[#002b1f]">
-              ✓
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-hud font-extrabold text-[20px] sm:text-[23px] text-[#003d4c] tracking-tight group-hover:text-[#00677d] transition-colors leading-none">
-                AQUA-SALUD
-              </span>
-              <span className="px-2 py-0.5 rounded-full bg-cyan-100/80 text-[#00677d] text-[10px] font-hud font-bold border border-cyan-200">
-                TERRITORIAL
-              </span>
-            </div>
-            <span className="text-[11px] text-[#00677d] font-semibold mt-1 leading-none font-hud">
-              Sistema Inteligente de Vigilancia
-            </span>
-          </div>
+          <AquaSaludLogo variant="principal" size="md" showDescriptor={true} />
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1">
           {navItems.map((item) => {
             const isActive = !isInsidePlatform && currentSection === item.id;
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => {
                   if (isInsidePlatform && onReturnToPublic) {
                     onReturnToPublic();
                   }
                   onNavigateSection(item.id);
                 }}
-                className={`px-3.5 py-2 rounded-xl font-hud text-[12px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                className={`px-2 xl:px-3 py-1.5 xl:py-2 rounded-xl font-hud text-[11px] xl:text-[11.5px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'text-[#00677d] bg-cyan-50 border border-cyan-200 shadow-xs'
-                    : 'text-[#475569] hover:text-[#00677d] hover:bg-slate-50'
+                    ? 'text-[#063B4A] bg-[#E8F1F4] border border-cyan-200 shadow-xs'
+                    : 'text-slate-600 hover:text-[#087E98] hover:bg-slate-50'
                 }`}
               >
                 {item.label}
@@ -126,40 +147,42 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 sm:gap-3">
-
-
           {onOpenQuoteModal && (
             <button
+              type="button"
               onClick={onOpenQuoteModal}
-              className="px-3 sm:px-4 py-2 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-[#00677d] border border-cyan-200 font-hud text-[11.5px] sm:text-[12px] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              className="px-3 sm:px-3.5 py-2 rounded-xl bg-[#E8F1F4] hover:bg-cyan-100 text-[#063B4A] border border-cyan-200 font-hud text-[11px] sm:text-[11.5px] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
             >
-              <span className="material-symbols-outlined text-[17px] text-[#00677d]">request_quote</span>
+              <span className="material-symbols-outlined text-[16px] text-[#087E98]">request_quote</span>
               <span className="hidden sm:inline">Cotizar Servicio</span>
             </button>
           )}
 
           {isInsidePlatform ? (
             <button
+              type="button"
               onClick={onReturnToPublic}
-              className="px-3.5 sm:px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#004e5f] font-hud text-[11.5px] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 sm:px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#063B4A] font-hud text-[11.5px] font-bold uppercase transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[17px]">arrow_back</span>
               <span className="hidden sm:inline">Portal Público</span>
             </button>
           ) : (
             <button
+              type="button"
               onClick={onEnterPlatform}
-              className="px-4 sm:px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#00b4d8] to-[#10e7b2] hover:from-[#10e7b2] hover:to-[#caf300] text-[#002b1f] font-hud text-[12px] sm:text-[13px] font-black uppercase tracking-wider shadow-[0_4px_16px_rgba(16,231,178,0.35)] hover:shadow-[0_6px_20px_rgba(16,231,178,0.5)] active:scale-95 transition-all duration-300 flex items-center gap-2 cursor-pointer"
+              className="px-4 sm:px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#087E98] to-[#10B981] hover:from-[#063B4A] hover:to-[#087E98] text-white font-hud text-[12px] sm:text-[12.5px] font-black uppercase tracking-wider shadow-[0_4px_16px_rgba(8,126,152,0.3)] hover:shadow-[0_6px_20px_rgba(8,126,152,0.45)] active:scale-95 transition-all duration-300 flex items-center gap-2 cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[18px]">verified</span>
-              <span>ACCEDER A AQUA-SALUD</span>
+              <span className="material-symbols-outlined text-[18px] text-[#8BE6C2]">verified</span>
+              <span>INGRESAR A LA PLATAFORMA</span>
             </button>
           )}
 
           {/* Mobile menu trigger */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-[#003d4c] cursor-pointer"
+            className="xl:hidden w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-[#063B4A] cursor-pointer"
             aria-label="Abrir menú"
           >
             <span className="material-symbols-outlined text-[24px]">
@@ -171,10 +194,11 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-2 animate-in slide-in-from-top-2">
+        <div className="xl:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-2 animate-in slide-in-from-top-2">
           {navItems.map((item) => (
             <button
               key={item.id}
+              type="button"
               onClick={() => {
                 if (isInsidePlatform && onReturnToPublic) {
                   onReturnToPublic();
@@ -184,11 +208,11 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-hud text-[13px] font-bold text-left cursor-pointer ${
                 !isInsidePlatform && currentSection === item.id
-                  ? 'bg-cyan-50 text-[#00677d] border border-cyan-200'
-                  : 'text-[#475569] hover:bg-slate-50'
+                  ? 'bg-cyan-50 text-[#087E98] border border-cyan-200'
+                  : 'text-slate-700 hover:bg-slate-50'
               }`}
             >
-              <span className="material-symbols-outlined text-[20px] text-[#00677d]">{item.icon}</span>
+              <span className="material-symbols-outlined text-[20px] text-[#087E98]">{item.icon}</span>
               <span>{item.label}</span>
             </button>
           ))}
@@ -196,26 +220,60 @@ export const AquaSaludHeader: React.FC<AquaSaludHeaderProps> = ({
           <div className="pt-2 border-t border-slate-100 space-y-2">
             {onOpenQuoteModal && (
               <button
+                type="button"
                 onClick={() => {
                   onOpenQuoteModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 rounded-xl bg-cyan-50 border border-cyan-200 text-[#00677d] font-hud text-[12.5px] font-bold uppercase text-center flex items-center justify-center gap-2 shadow-2xs"
+                className="w-full py-2.5 rounded-xl bg-[#E8F1F4] border border-cyan-200 text-[#063B4A] font-hud text-[12.5px] font-bold uppercase text-center flex items-center justify-center gap-2 shadow-2xs"
               >
-                <span className="material-symbols-outlined text-[18px]">request_quote</span>
+                <span className="material-symbols-outlined text-[18px] text-[#087E98]">request_quote</span>
                 <span>Solicitar Cotización de Servicios</span>
               </button>
             )}
 
+            {/* Social Media Links in Mobile Drawer */}
+            <div className="pt-2 pb-1">
+              <span className="block text-[11px] font-hud font-bold text-slate-500 uppercase tracking-wider text-center mb-2">
+                Síguenos en Redes Sociales:
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#1877F2] text-white text-[12px] font-hud font-bold shadow-xs hover:bg-[#166fe5] transition-all cursor-pointer"
+                >
+                  <svg className="w-4 h-4 fill-white shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                  </svg>
+                  <span>Facebook</span>
+                </a>
+
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white text-[12px] font-hud font-bold shadow-xs hover:opacity-95 transition-all cursor-pointer"
+                >
+                  <svg className="w-4 h-4 fill-white shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                  </svg>
+                  <span>Instagram</span>
+                </a>
+              </div>
+            </div>
+
             <button
+              type="button"
               onClick={() => {
                 onEnterPlatform();
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#00b4d8] to-[#10e7b2] text-[#002b1f] font-hud text-[13px] font-black uppercase text-center flex items-center justify-center gap-2 shadow-sm"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#087E98] to-[#10B981] text-white font-hud text-[13px] font-black uppercase text-center flex items-center justify-center gap-2 shadow-sm"
             >
-              <span className="material-symbols-outlined text-[18px]">verified</span>
-              <span>Acceder a la Plataforma Operativa</span>
+              <span className="material-symbols-outlined text-[18px] text-[#8BE6C2]">verified</span>
+              <span>INGRESAR A LA PLATAFORMA</span>
             </button>
           </div>
         </div>

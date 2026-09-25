@@ -1,6 +1,6 @@
 {
   "name": "CLORAGUA",
-  "description": "AQUA-SALUD: Sistema Inteligente para la Vigilancia y Gestión Territorial del Agua. 'Del control del agua a la protección de la salud.' Integración unificada de módulos para Operadores JASS rurales, Laboratorio Analítico acreditado, Autoridades Sanitarias y Municipalidades (ATM) con CRM comercial y asistente AQUA-IA según D.S. N.° 031-2010-SA.",
-  "requestFramePermissions": ["camera"],
+  "description": "AQUA SALUD: Tecnología para el agua segura. Soluciones digitales, análisis, monitoreo y herramientas inteligentes para la gestión de la calidad del agua.",
+  "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

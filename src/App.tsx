@@ -3,6 +3,7 @@ import { TopHeader } from './components/TopHeader';
 import { FloatingNavbar, TabType } from './components/FloatingNavbar';
 import { WaterBackground } from './components/WaterBackground';
 import { HeroVideoSection } from './components/HeroVideoSection';
+import { AquaSaludHomeSheet } from './components/home/AquaSaludHomeSheet';
 import { DosageCalculatorView } from './components/DosageCalculatorView';
 import { PhotometerHUDView } from './components/PhotometerHUDView';
 import { SystemsManagerView } from './components/SystemsManagerView';
@@ -24,7 +25,10 @@ import {
 } from './types';
 import { AquaSaludHeader } from './components/public/AquaSaludHeader';
 import { AquaSaludHero } from './components/public/AquaSaludHero';
+import { AquaSaludEcosistema } from './components/public/AquaSaludEcosistema';
+import { AquaSaludSoluciones } from './components/public/AquaSaludSoluciones';
 import { AquaSaludNosotros } from './components/public/AquaSaludNosotros';
+import { AquaSaludContacto } from './components/public/AquaSaludContacto';
 import { AquaSaludServicios } from './components/public/AquaSaludServicios';
 import { AquaSaludSectores } from './components/public/AquaSaludSectores';
 import { AquaSaludRecursos } from './components/public/AquaSaludRecursos';
@@ -530,7 +534,7 @@ export default function App() {
   };
 
   const currentTabTitleMap: Record<TabType, string> = {
-    inicio: 'PORTAL PRINCIPAL',
+    inicio: 'HOJA PRINCIPAL • AQUA-SALUD',
     dashboard: 'DASHBOARD TERRITORIAL',
     territorio: 'AQUA-TERRITORIO • MAPA GIS',
     planes: 'PLANES DE ACCIÓN • TRAZABILIDAD',
@@ -552,14 +556,7 @@ export default function App() {
   const handleNavigatePublicSection = (section: PublicNavSection) => {
     setPublicSection(section);
     setAppMode('portal_publico');
-    setTimeout(() => {
-      const el = document.getElementById(section);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 50);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const selectedSystem = systems.find((s) => s.id === selectedSystemId) || systems[0];
@@ -591,60 +588,142 @@ export default function App() {
             }}
           />
 
-          <main className="flex-1">
-            <div id="inicio">
-              <AquaSaludHero
-                onLearnMore={() => handleNavigatePublicSection('nosotros')}
-                onOurServices={() => handleNavigatePublicSection('servicios')}
-                onEnterPlatform={() => {
-                  setAppMode('plataforma_jass');
-                  setActiveTab('jass');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onOpenDashboard={() => {
-                  setAppMode('plataforma_jass');
-                  setActiveTab('dashboard');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
-            </div>
+          <main className="flex-1 flex flex-col">
+            {/* 1. SECCIÓN INICIO / PORTADA: Únicamente visible cuando publicSection === 'inicio' */}
+            {publicSection === 'inicio' && (
+              <div id="inicio" className="flex-1 flex flex-col animate-in fade-in duration-300">
+                <AquaSaludHero
+                  onLearnMore={() => handleNavigatePublicSection('nosotros')}
+                  onOurServices={() => handleNavigatePublicSection('servicios')}
+                  onCalculateChlorine={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('dosis');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onEnterPlatform={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('inicio');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenDashboard={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('dashboard');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              </div>
+            )}
 
-            <AquaSaludNosotros />
-            <AquaSaludServicios
-              onOpenAquaLab={() => {
-                setAppMode('plataforma_jass');
-                setActiveTab('lab');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              onOpenAquaMetals={() => {
-                setAppMode('plataforma_jass');
-                setActiveTab('metals');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              onOpenQuoteModal={(serviceName) => {
-                setPreselectedQuoteService(serviceName);
-                setIsPublicQuoteModalOpen(true);
-              }}
-            />
-            <AquaSaludSectores
-              onSelectJassSector={() => {
-                setAppMode('plataforma_jass');
-                setActiveTab('jass');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-            <AquaSaludRecursos
-              onOpenUserManual={() => setIsUserManualOpen(true)}
-              onOpenNormative={() => setIsNormativeOpen(true)}
-            />
+            {/* 2. SECCIÓN ECOSISTEMA: Visible únicamente al hacer clic en ECOSISTEMA */}
+            {publicSection === 'ecosistema' && (
+              <div id="ecosistema" className="animate-in fade-in duration-300">
+                <AquaSaludEcosistema
+                  onOpenModuleTab={(tab: TabType) => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab(tab);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onSelectModule={(tab: TabType) => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab(tab);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenQuoteModal={(serviceName) => {
+                    setPreselectedQuoteService(serviceName);
+                    setIsPublicQuoteModalOpen(true);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* 3. SECCIÓN SERVICIOS: Visible únicamente al hacer clic en SERVICIOS */}
+            {publicSection === 'servicios' && (
+              <div id="servicios" className="animate-in fade-in duration-300">
+                <AquaSaludServicios
+                  onOpenAquaLab={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('lab');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenQuoteModal={(serviceName) => {
+                    setPreselectedQuoteService(serviceName);
+                    setIsPublicQuoteModalOpen(true);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* 4. SECCIÓN SOLUCIONES: Visible únicamente al hacer clic en SOLUCIONES o SECTORES */}
+            {(publicSection === 'soluciones' || publicSection === 'sectores') && (
+              <div id="soluciones" className="animate-in fade-in duration-300">
+                <AquaSaludSoluciones
+                  onOpenJassPlatform={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('jass');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenLabPlatform={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('lab');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenDashboardPlatform={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('dashboard');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenQuoteModal={(serviceName) => {
+                    setPreselectedQuoteService(serviceName);
+                    setIsPublicQuoteModalOpen(true);
+                  }}
+                />
+                <AquaSaludSectores
+                  onSelectJassSector={() => {
+                    setAppMode('plataforma_jass');
+                    setActiveTab('jass');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              </div>
+            )}
+
+            {/* 5. SECCIÓN RECURSOS: Visible únicamente al hacer clic en RECURSOS */}
+            {publicSection === 'recursos' && (
+              <div id="recursos" className="animate-in fade-in duration-300">
+                <AquaSaludRecursos
+                  onOpenUserManual={() => setIsUserManualOpen(true)}
+                  onOpenNormative={() => setIsNormativeOpen(true)}
+                />
+              </div>
+            )}
+
+            {/* 6. SECCIÓN NOSOTROS (¿QUIÉNES SOMOS?): Visible únicamente al hacer clic en NOSOTROS */}
+            {publicSection === 'nosotros' && (
+              <div id="nosotros" className="animate-in fade-in duration-300">
+                <AquaSaludNosotros />
+              </div>
+            )}
+
+            {/* 7. SECCIÓN CONTACTO: Canales oficiales y atención rápida (NO muestra Quiénes Somos) */}
+            {publicSection === 'contacto' && (
+              <div id="contacto" className="animate-in fade-in duration-300">
+                <AquaSaludContacto
+                  onOpenQuoteModal={() => {
+                    setPreselectedQuoteService(undefined);
+                    setIsPublicQuoteModalOpen(true);
+                  }}
+                />
+              </div>
+            )}
           </main>
 
+          {/* Footer institucional de AQUA SALUD visible en la parte inferior de la portada principal y de las secciones */}
           <AquaSaludFooter
             onNavigateSection={handleNavigatePublicSection}
             onOpenLegal={(type) => setLegalModalType(type)}
             onEnterPlatform={() => {
               setAppMode('plataforma_jass');
-              setActiveTab('jass');
+              setActiveTab('inicio');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onOpenQuoteModal={() => {
@@ -706,24 +785,33 @@ export default function App() {
 
           <main className="flex-1 w-full max-w-5xl mx-auto px-3 sm:px-6 pt-2 relative z-10">
             {activeTab === 'inicio' && (
-              <HeroVideoSection
+              <AquaSaludHomeSheet
                 systems={systems}
+                records={records}
                 activeProfile={activeProfile}
+                activeAlertCount={activeAlertCount}
                 onNavigateTab={(tab) => {
                   setActiveTab(tab);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
+                onNavigatePublicSection={handleNavigatePublicSection}
                 onOpenDpdCamera={() => setIsDpdCameraOpen(true)}
                 onOpenSolutionPrep={() => setIsSolutionPrepOpen(true)}
                 onOpenCalibrate={() => setIsCalibrateOpen(true)}
                 onOpenNormative={() => setIsNormativeOpen(true)}
+                onOpenVolumeCalc={() => setIsVolumeCalcOpen(true)}
                 onOpenRegisterProfile={handleOpenRegisterProfile}
                 onOpenSwitchAccount={handleOpenSwitchAccount}
                 onSelectSystemForDosage={(id) => {
                   setSelectedSystemId(id);
                   setActiveTab('dosis');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 onOpenUserManual={() => setIsUserManualOpen(true)}
+                onOpenQuoteModal={() => {
+                  setPreselectedQuoteService(undefined);
+                  setIsPublicQuoteModalOpen(true);
+                }}
               />
             )}
 

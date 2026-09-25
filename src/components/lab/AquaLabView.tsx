@@ -372,27 +372,36 @@ export const AquaLabView: React.FC<AquaLabViewProps> = ({
           },
         ]}
         actions={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setIsNewSampleOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-cyan-50 text-[#004e5f] font-hud text-[12px] font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[18px]">add_circle</span>
+              <span>+ NUEVA MUESTRA</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('samples')}
+              className="px-4 py-2.5 rounded-xl bg-[#10e7b2]/20 hover:bg-[#10e7b2]/30 border border-[#10e7b2]/40 text-white font-hud text-[12px] font-bold uppercase transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px] text-[#10e7b2]">verified_user</span>
+              <span>CADENA DE CUSTODIA (5 ETAPAS)</span>
+            </button>
+
             {onNavigateToMetals && (
               <button
                 type="button"
                 onClick={onNavigateToMetals}
-                className="glass-option-btn text-xs font-black uppercase tracking-wider"
+                className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-hud text-[12px] font-bold uppercase transition-all flex items-center gap-2 cursor-pointer"
                 title="Abrir Módulo de Metales Pesados y Elementos Traza"
               >
-                <span className="material-symbols-outlined text-base text-amber-500">science</span>
-                <span>☣️ AQUA-METALS</span>
+                <span className="material-symbols-outlined text-[18px] text-amber-300">science</span>
+                <span>AQUA-METALS</span>
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={() => setIsNewSampleOpen(true)}
-              className="glass-option-btn-primary text-xs sm:text-sm font-black uppercase tracking-wider"
-            >
-              <span className="material-symbols-outlined text-base">add_circle</span>
-              <span>+ NUEVA MUESTRA</span>
-            </button>
           </div>
         }
       />

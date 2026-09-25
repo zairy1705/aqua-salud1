@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { OfficialNormativaModal } from './public/OfficialNormativaModal';
 
 interface NormativeModalProps {
   isOpen: boolean;
@@ -6,7 +7,24 @@ interface NormativeModalProps {
 }
 
 export const NormativeModal: React.FC<NormativeModalProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+  const [isFullViewerOpen, setIsFullViewerOpen] = useState(false);
+  const [viewerAction, setViewerAction] = useState<'view' | 'download' | 'print'>('view');
+
+  if (!isOpen && !isFullViewerOpen) return null;
+
+  if (isFullViewerOpen) {
+    return (
+      <OfficialNormativaModal
+        isOpen={true}
+        onClose={() => {
+          setIsFullViewerOpen(false);
+          onClose();
+        }}
+        documentId="ds-031-2010-sa"
+        initialAction={viewerAction}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4 animate-in fade-in">
@@ -14,7 +32,7 @@ export const NormativeModal: React.FC<NormativeModalProps> = ({ isOpen, onClose 
         <div className="p-4 border-b border-cyan-500/20 flex items-center justify-between bg-[#00242e]">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-[#caf300]">
-              <span className="material-symbols-outlined text-[22px]">menu_book</span>
+              <span className="material-symbols-outlined text-[22px]">gavel</span>
             </div>
             <div>
               <h3 className="font-hud font-bold text-[15px] text-white">
@@ -70,15 +88,51 @@ export const NormativeModal: React.FC<NormativeModalProps> = ({ isOpen, onClose 
           </div>
         </div>
 
-        <div className="p-4 bg-[#00212b] border-t border-cyan-500/20 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 rounded-full bg-[#10e7b2] hover:bg-gradient-to-r hover:from-[#10e7b2] hover:to-[#caf300] text-[#002116] font-hud text-[12px] font-extrabold uppercase transition-all duration-300 shadow-sm hover:shadow-[0_0_18px_rgba(16,231,178,0.5)] active:scale-95 cursor-pointer"
-          >
-            Cerrar Guía
-          </button>
+        <div className="p-4 bg-[#00212b] border-t border-cyan-500/20 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setViewerAction('download');
+                setIsFullViewerOpen(true);
+              }}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-cyan-200 text-xs font-hud font-bold uppercase flex items-center gap-1 cursor-pointer transition-all"
+            >
+              <span className="material-symbols-outlined text-[16px]">download</span>
+              <span>Descargar PDF</span>
+            </button>
+            <button
+              onClick={() => {
+                setViewerAction('print');
+                setIsFullViewerOpen(true);
+              }}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-cyan-200 text-xs font-hud font-bold uppercase flex items-center gap-1 cursor-pointer transition-all"
+            >
+              <span className="material-symbols-outlined text-[16px]">print</span>
+              <span>Imprimir</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setViewerAction('view');
+                setIsFullViewerOpen(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-[#00b4d8] hover:bg-[#0096b4] text-[#001f28] font-hud text-[11.5px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[17px]">menu_book</span>
+              <span>Ver Documento Completo</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 font-hud text-[11.5px] font-bold uppercase transition-all cursor-pointer"
+            >
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+

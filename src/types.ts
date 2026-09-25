@@ -1,3 +1,5 @@
+export type { TabType } from './components/FloatingNavbar';
+
 export type WaterSystemType =
   | 'reservorio_apoyado'
   | 'reservorio_elevado'
@@ -129,7 +131,10 @@ export interface OperatorProfile {
 export type PublicNavSection =
   | 'inicio'
   | 'nosotros'
+  | 'ecosistema'
   | 'servicios'
+  | 'soluciones'
+  | 'diagnostico'
   | 'sectores'
   | 'recursos'
   | 'contacto';

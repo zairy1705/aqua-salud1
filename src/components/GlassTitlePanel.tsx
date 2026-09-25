@@ -60,98 +60,90 @@ export const GlassTitlePanel: React.FC<GlassTitlePanelProps> = ({
 
   return (
     <div
-      className={`glass-title-panel p-5 sm:p-7 relative transition-all duration-300 ${className}`}
+      className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#003d4c] via-[#00677d] to-[#00b4d8] text-white shadow-xl relative overflow-hidden border border-cyan-400/25 transition-all duration-300 ${className}`}
     >
-      {/* Background ambient light prism effect */}
-      <div className="absolute -top-12 -right-12 w-72 h-72 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-[#10e7b2]/15 rounded-full blur-2xl pointer-events-none" />
+      {/* Luces y brillos de fondo ambientales */}
+      <div className="absolute -top-16 -right-16 w-80 h-80 bg-cyan-300/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 w-72 h-72 bg-[#10e7b2]/20 rounded-full blur-2xl pointer-events-none" />
 
-      {/* Main Glass Header Content */}
-      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-        <div className="max-w-3xl">
-          {/* Header Metadata Chips / Badges */}
-          {(badge || normative) && (
-            <div className="flex items-center gap-2 flex-wrap mb-2.5">
-              {badge && (
-                <span className="glass-badge text-[#00677d] border-cyan-200/90 shadow-xs font-black">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00b4d8] animate-pulse" />
-                  <span>{badge}</span>
-                </span>
-              )}
-              {normative && (
-                <span className="text-[11px] font-hud font-bold text-slate-700 tracking-wide flex items-center gap-1 bg-white/60 px-2 py-0.5 rounded-md border border-white/80">
-                  <span className="material-symbols-outlined text-[14px] text-[#00b4d8]">
-                    verified
-                  </span>
-                  <span>{normative}</span>
-                </span>
-              )}
-            </div>
-          )}
+      {/* Marca de agua decorativa semitransparente en la esquina inferior derecha */}
+      <div className="absolute right-4 -bottom-6 opacity-10 pointer-events-none select-none text-white">
+        <span className="material-symbols-outlined text-[200px] sm:text-[240px] leading-none">
+          {icon}
+        </span>
+      </div>
 
-          {/* Title with Glass Icon and Modern Uppercase High-Contrast Typography */}
-          <div className="flex items-start sm:items-center gap-3.5">
-            {icon && (
-              <div className="glass-icon-box w-12 h-12 sm:w-14 sm:h-14 rounded-2xl shrink-0 text-[#00677d]">
-                <span className="material-symbols-outlined text-[26px] sm:text-[30px] leading-none">
-                  {icon}
-                </span>
-              </div>
+      {/* Contenido principal del banner */}
+      <div className="relative z-10 max-w-4xl">
+        {/* Badge / Chip superior estilo pill oficial con icono y normativa */}
+        {(badge || normative) && (
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[#10e7b2] text-[11px] font-hud font-bold uppercase mb-3 backdrop-blur-xs">
+            <span className="material-symbols-outlined text-[16px] text-[#10e7b2] shrink-0">
+              {icon}
+            </span>
+            <span>{badge || 'SISTEMA OFICIAL'}</span>
+            {normative && (
+              <>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10e7b2]" />
+                <span className="text-cyan-200">{normative}</span>
+              </>
             )}
-            <div>
-              <h1 className="glass-title-heading text-xl sm:text-2xl lg:text-3xl leading-tight">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="text-xs sm:text-[13px] text-slate-700 mt-1 leading-relaxed font-medium">
-                  {subtitle}
-                </p>
-              )}
-            </div>
           </div>
+        )}
 
-          {/* Quick Metrics Bar if provided */}
-          {stats && stats.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 mt-4 pt-3.5 border-t border-cyan-900/10">
-              {stats.map((st, idx) => (
-                <div
-                  key={idx}
-                  className={`glass-badge py-1.5 px-3 transition-all ${
-                    st.highlight
-                      ? 'bg-amber-100/90 border-amber-300 text-amber-900 shadow-sm'
-                      : 'bg-white/85 text-slate-800'
-                  }`}
-                >
-                  <div className="flex flex-col text-left">
-                    <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wider">
-                      {st.label}
+        {/* Título en tipografía font-hud font-black mayúscula de alto impacto */}
+        <h1 className="font-hud font-black text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight uppercase drop-shadow-xs">
+          {title}
+        </h1>
+
+        {/* Subtítulo descriptivo en tono cian claro legible */}
+        {subtitle && (
+          <p className="text-cyan-100 text-[13px] sm:text-[14.5px] mt-2 leading-relaxed max-w-3xl font-normal">
+            {subtitle}
+          </p>
+        )}
+
+        {/* Botones de acción / Opciones interactivas */}
+        {renderedActions && (
+          <div className="flex flex-wrap items-center gap-2.5 mt-5">
+            {renderedActions}
+          </div>
+        )}
+
+        {/* Barra de métricas e indicadores de impacto (stats) si están definidos */}
+        {stats && stats.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2.5 mt-5 pt-4 border-t border-white/15">
+            {stats.map((st, idx) => (
+              <div
+                key={idx}
+                className={`p-2.5 sm:px-3 sm:py-2 rounded-xl backdrop-blur-md transition-all border ${
+                  st.highlight
+                    ? 'bg-amber-400/25 border-amber-300/50 text-amber-100'
+                    : 'bg-white/10 border-white/20 text-white'
+                }`}
+              >
+                <div className="flex flex-col text-left">
+                  <span className="text-[9px] text-cyan-200 font-extrabold uppercase tracking-wider">
+                    {st.label}
+                  </span>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className={`text-[13px] sm:text-[14px] font-mono font-black ${st.highlight ? 'text-amber-200' : 'text-white'}`}>
+                      {st.value}
                     </span>
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[12px] font-hud font-black ${st.highlight ? 'text-amber-950' : 'text-[#003d4c]'}`}>
-                        {st.value}
-                      </span>
-                      {st.badge && (
-                        <span className="text-[8.5px] px-1.5 py-0.2 rounded bg-cyan-100/90 text-[#00677d] font-black uppercase">
-                          {st.badge}
-                        </span>
-                      )}
-                    </div>
-                    {st.subtext && (
-                      <span className="text-[8.5px] text-slate-500 font-medium">
-                        {st.subtext}
+                    {st.badge && (
+                      <span className="text-[8.5px] px-1.5 py-0.5 rounded bg-white/20 text-white font-black uppercase">
+                        {st.badge}
                       </span>
                     )}
                   </div>
+                  {st.subtext && (
+                    <span className="text-[8.5px] text-cyan-100/80 font-medium">
+                      {st.subtext}
+                    </span>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Options / Action Buttons */}
-        {renderedActions && (
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 self-start lg:self-center shrink-0">
-            {renderedActions}
+              </div>
+            ))}
           </div>
         )}
       </div>

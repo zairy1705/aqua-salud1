@@ -147,13 +147,13 @@ export const DosageCalculatorView: React.FC<DosageCalculatorViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 animate-in fade-in duration-300">
-      {/* Title Header with GlassTitlePanel */}
+      {/* Title Header with GlassTitlePanel - CLORAGUA */}
       <GlassTitlePanel
-        badge="FASE 1 • INGENIERÍA SANITARIA • DOSIFICACIÓN DE PRECISIÓN"
+        badge="AQUA SALUD • CLORAGUA • DOSIFICACIÓN DE PRECISIÓN"
         normative="D.S. N.° 031-2010-SA • DIGESA"
-        icon="calculate"
-        title="CALCULADORA DE DOSIFICACIÓN DE CLORO"
-        subtitle="Cálculo estequiométrico de masa o volumen exacto de desinfectante según el volumen útil del reservorio, concentración activa y demanda residual."
+        icon="colorize"
+        title="CLORAGUA • CALCULADOR DE DOSIFICACIÓN"
+        subtitle="Calculador inteligente de dosificación de cloro para sistemas rurales y urbanos con dosificación estequiométrica, control de concentración e inocuidad garantizada."
         stats={[
           {
             label: 'VOLUMEN CALCULADO',
@@ -172,31 +172,94 @@ export const DosageCalculatorView: React.FC<DosageCalculatorViewProps> = ({
           },
         ]}
         actions={
-          systems.length > 0 ? (
-            <div className="flex items-center gap-2 bg-white/70 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/80 shadow-xs">
-              <Layers className="w-4 h-4 text-cyan-700 shrink-0" />
-              <div className="text-xs">
-                <label htmlFor={`${formId}-system-select`} className="block text-[9.5px] uppercase font-black text-slate-500 tracking-wider">
-                  Tanque Asignado:
-                </label>
-                <select
-                  id={`${formId}-system-select`}
-                  value={selectedSystemId}
-                  onChange={(e) => handleSystemChange(e.target.value)}
-                  className="font-bold text-slate-800 bg-transparent border-0 p-0 pr-4 focus:ring-0 text-xs cursor-pointer"
-                >
-                  <option value="">Personalizado (Manual)</option>
-                  {systems.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.capacityLiters.toLocaleString()} L)
-                    </option>
-                  ))}
-                </select>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={handleSave}
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-cyan-50 text-[#004e5f] font-hud text-[12px] font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[18px]">save</span>
+              <span>{savedSuccess ? '¡Guardado con Éxito!' : 'Guardar en Bitácora'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsShockDisinfection(!isShockDisinfection)}
+              className="px-4 py-2.5 rounded-xl bg-[#10e7b2]/20 hover:bg-[#10e7b2]/30 border border-[#10e7b2]/40 text-white font-hud text-[12px] font-bold uppercase transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px] text-[#10e7b2]">bolt</span>
+              <span>{isShockDisinfection ? 'Modo Rutina' : 'Desinfección de Choque'}</span>
+            </button>
+
+            {systems.length > 0 && (
+              <div className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-3.5 py-2 rounded-xl transition-all">
+                <Layers className="w-4 h-4 text-cyan-200 shrink-0" />
+                <div className="text-xs">
+                  <select
+                    id={`${formId}-system-select`}
+                    value={selectedSystemId}
+                    onChange={(e) => handleSystemChange(e.target.value)}
+                    aria-label="Tanque Asignado"
+                    className="font-bold text-white bg-transparent border-0 p-0 pr-2 focus:ring-0 text-xs cursor-pointer"
+                  >
+                    <option value="" className="text-slate-900">Tanque: Personalizado</option>
+                    {systems.map((s) => (
+                      <option key={s.id} value={s.id} className="text-slate-900">
+                        {s.name} ({s.capacityLiters.toLocaleString()} L)
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
-          ) : undefined
+            )}
+          </div>
         }
       />
+
+      {/* CLORAGUA Visual Process Flow: VOLUMEN → CONCENTRACIÓN → DOSIS → AGUA SEGURA */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-[#063B4A] via-[#087E98] to-[#10B981] text-white shadow-md border border-cyan-400/20">
+        <div className="flex items-center justify-between gap-2 mb-2 pb-1.5 border-b border-white/15 text-[11px] font-hud uppercase tracking-wider text-[#8BE6C2]">
+          <span className="flex items-center gap-1.5 font-black">
+            <Sparkles className="w-3.5 h-3.5" />
+            Flujo de Ingeniería Sanitaria CLORAGUA
+          </span>
+          <span className="text-cyan-200">Garantía de Inocuidad D.S. N.° 031-2010-SA</span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center text-xs">
+          <div className="p-2.5 rounded-xl bg-black/20 border border-white/10">
+            <span className="text-[10px] text-cyan-200 block font-bold">1. VOLUMEN</span>
+            <span className="font-mono text-sm sm:text-base font-black text-white">
+              {(result.waterVolumeLiters / 1000).toFixed(1)} m³
+            </span>
+            <span className="text-[9.5px] text-slate-300 block">Tipo: {geometry.toUpperCase()}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/20 border border-white/10">
+            <span className="text-[10px] text-cyan-200 block font-bold">2. CONCENTRACIÓN</span>
+            <span className="font-mono text-sm sm:text-base font-black text-amber-300">
+              {result.concentrationPercent}%
+            </span>
+            <span className="text-[9.5px] text-slate-300 block truncate">{result.productName}</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/20 border border-white/10">
+            <span className="text-[10px] text-cyan-200 block font-bold">3. DOSIS</span>
+            <span className="font-mono text-sm sm:text-base font-black text-[#8BE6C2]">
+              {result.commercialDoseAmount} {result.commercialDoseUnit}
+            </span>
+            <span className="text-[9.5px] text-slate-300 block">Pesado / medido</span>
+          </div>
+
+          <div className="p-2.5 rounded-xl bg-black/20 border border-white/10">
+            <span className="text-[10px] text-cyan-200 block font-bold">4. AGUA SEGURA</span>
+            <span className="font-mono text-sm sm:text-base font-black text-[#39C6DD]">
+              {isShockDisinfection ? '50.0 mg/L' : `${targetChlorinePpm} mg/L`}
+            </span>
+            <span className="text-[9.5px] text-emerald-200 block">0.5 - 2.0 ppm red</span>
+          </div>
+        </div>
+      </div>
 
       {/* Main Grid: Parameters on Left, Results on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -682,31 +745,51 @@ export const DosageCalculatorView: React.FC<DosageCalculatorViewProps> = ({
               </div>
 
               {/* Technical Breakdown Matrix */}
-              <div className="grid grid-cols-2 gap-2.5 my-4 bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 text-xs">
+              <div className="grid grid-cols-2 gap-2.5 my-4 bg-slate-800/80 p-3.5 rounded-xl border border-slate-700/80 text-xs">
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Volumen Tratado</span>
+                  <span className="text-slate-400 block text-[10.5px] uppercase font-bold">Tipo de Tanque</span>
                   <span className="font-bold text-white font-mono">
+                    {geometry === 'rectangular' ? 'Reservorio Prisma Rectangular' : geometry === 'cylinder' ? 'Reservorio Cilindro Vertical' : 'Tanque Elevado'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10.5px] uppercase font-bold">Volumen Útil</span>
+                  <span className="font-bold text-teal-300 font-mono">
                     {result.waterVolumeLiters.toLocaleString()} L ({result.waterVolumeM3} m³)
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Dosis Neta</span>
-                  <span className="font-bold text-teal-300 font-mono">
-                    +{result.effectiveChlorineNeedPpm} ppm (mg/L)
+                  <span className="text-slate-400 block text-[10.5px] uppercase font-bold">Concentración Producto</span>
+                  <span className="font-bold text-amber-300 font-mono">
+                    {result.concentrationPercent}% Cloro Activo
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[11px]">Cloro Puro Activo</span>
-                  <span className="font-bold text-white font-mono">
-                    {result.pureChlorineGrams} g Cl₂
+                  <span className="text-slate-400 block text-[10.5px] uppercase font-bold">Dosis / Unidad</span>
+                  <span className="font-bold text-[#8BE6C2] font-mono">
+                    {result.commercialDoseAmount} {result.commercialDoseUnit}
                   </span>
                 </div>
-                <div>
-                  <span className="text-slate-400 block text-[11px]">Tiempo Contacto Mín.</span>
-                  <span className="font-bold text-cyan-300 font-mono flex items-center gap-1">
-                    <Clock className="w-3 h-3 inline" />
-                    {result.contactTimeMinutes} minutos
+              </div>
+
+              {/* Explicación y Recomendación Sanitaria */}
+              <div className="space-y-2 mb-4">
+                <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-800/50 text-xs">
+                  <span className="font-hud font-bold text-cyan-300 block mb-0.5 text-[11px] uppercase tracking-wide">
+                    Explicación Estequiométrica:
                   </span>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Para clorar {result.waterVolumeLiters.toLocaleString()} L de agua con una demanda neta de {result.effectiveChlorineNeedPpm} ppm se requieren {result.pureChlorineGrams} g de cloro activo puro. Al utilizar {result.productName} ({result.concentrationPercent}%), la masa comercial calculada asciende a <strong>{result.commercialDoseAmount} {result.commercialDoseUnit}</strong>.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/50 text-xs">
+                  <span className="font-hud font-bold text-emerald-300 block mb-0.5 text-[11px] uppercase tracking-wide">
+                    Recomendación de Aplicación:
+                  </span>
+                  <p className="text-slate-300 text-[11px] leading-relaxed">
+                    Aplicar preferentemente al inicio de llenado del reservorio para garantizar mezcla homogénea hidráulica y un tiempo de retención mínimo de <strong>{result.contactTimeMinutes} minutos</strong> antes del primer punto de consumo de la red.
+                  </p>
                 </div>
               </div>
 

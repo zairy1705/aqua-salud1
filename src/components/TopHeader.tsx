@@ -6,6 +6,7 @@ import {
   isCalypsoPlaying as checkCalypsoPlaying,
 } from '../utils/audioSystem';
 import { TabType } from './FloatingNavbar';
+import { AquaSaludLogo } from './common/AquaSaludLogo';
 
 interface TopHeaderProps {
   currentTabTitle?: string;
@@ -80,26 +81,21 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         <div className="flex items-center gap-2 sm:gap-2.5">
           <div
             onClick={onNavigateHome}
-            className="flex items-center gap-2.5 cursor-pointer group select-none"
+            className="flex items-center gap-2 cursor-pointer group select-none"
             title="Ir a Página Principal"
           >
-            <div className="glass-icon-box w-10 h-10 rounded-xl flex items-center justify-center text-[#00677d] group-hover:scale-105 transition-transform relative">
-              <span className="material-symbols-outlined text-[24px]">water_drop</span>
-              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#10e7b2] border-2 border-white flex items-center justify-center text-[7px] font-bold text-[#002116]">
-                ✓
-              </span>
-            </div>
+            <AquaSaludLogo variant="isotipo" size="sm" showDescriptor={false} />
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
-                <span className="glass-title-heading text-[17px] sm:text-[19px] leading-none">
-                  AQUA-SALUD
+                <span className="font-hud font-black text-[16px] sm:text-[18px] text-[#063B4A] tracking-tight leading-none">
+                  AQUA SALUD
                 </span>
-                <span className="glass-badge text-[8.5px] px-1.5 py-0.5 text-[#00677d]">
-                  JASS
+                <span className="px-1.5 py-0.5 rounded-full bg-[#10B981]/15 text-[#063B4A] font-hud text-[8.5px] font-black tracking-wider uppercase border border-[#10B981]/30">
+                  OPERATIVO
                 </span>
               </div>
               <div className="flex items-center gap-1 mt-1">
-                <span className="font-hud text-[10px] sm:text-[11px] text-[#006c51] tracking-wider uppercase leading-none font-black">
+                <span className="font-hud text-[10px] sm:text-[11px] text-[#087E98] tracking-wider uppercase leading-none font-black truncate max-w-[180px] sm:max-w-xs">
                   {currentTabTitle}
                 </span>
               </div>
@@ -364,6 +360,21 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
                 {onNavigateTab && (
                   <>
+                    <button
+                      onClick={() => {
+                        setIsAppsOpen(false);
+                        onNavigateTab('inicio');
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl text-left text-[12.5px] font-medium text-[#00677d] hover:bg-cyan-50 flex items-center gap-2 transition-all cursor-pointer group bg-cyan-50/70 border border-cyan-200/60 mb-1"
+                      type="button"
+                    >
+                      <span className="material-symbols-outlined text-[#0077b6] text-[18px]">home</span>
+                      <div>
+                        <div className="font-bold text-[11.5px] text-[#00677d]">🏠 Hoja Principal AQUA-SALUD</div>
+                        <div className="text-[9.5px] text-slate-500">Portada científica & centro de mando</div>
+                      </div>
+                    </button>
+
                     <div className="px-3 py-1.5 text-[10px] font-hud uppercase tracking-wider text-[#00677d] font-bold border-b border-[#edf5fc] mb-1 mt-1 flex items-center justify-between">
                       <span>Perspectivas de Usuario</span>
                       <span className="text-[9px] text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded font-bold">4 ROLES</span>

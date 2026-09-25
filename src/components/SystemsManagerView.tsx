@@ -237,14 +237,24 @@ export const SystemsManagerView: React.FC<SystemsManagerViewProps> = ({
           },
         ]}
         actions={
-          <button
-            id="btn-add-system-modal"
-            onClick={() => setIsModalOpen(true)}
-            className="glass-option-btn-primary text-xs font-black uppercase tracking-wider"
-          >
-            <Plus className="w-4 h-4" />
-            <span>REGISTRAR NUEVO TANQUE</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              id="btn-add-system-modal"
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-white hover:bg-cyan-50 text-[#004e5f] font-hud text-[12px] font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm cursor-pointer active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              <span>REGISTRAR NUEVO RESERVORIO</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-4 py-2.5 rounded-xl bg-[#10e7b2]/20 hover:bg-[#10e7b2]/30 border border-[#10e7b2]/40 text-white font-hud text-[12px] font-bold uppercase transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px] text-[#10e7b2]">print</span>
+              <span>Imprimir / Guardar en PDF</span>
+            </button>
+          </div>
         }
       />
 
